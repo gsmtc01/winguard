@@ -32,29 +32,34 @@ if not defined VCVARS goto :novs
 if not exist "!VCVARS!" goto :novs
 echo [정보] vcvarsall = !VCVARS!
 
-set "PATH=C:\Program Files\LLVM\bin;%PATH%"
-REM 실행 중이면 복사 단계에서 파일이 잠긴다. 먼저 종료를 시도한다.
-REM 단, 앱은 requireAdministrator 로 실행되므로 이 스크립트가 관리자 권한이
-REM 아니면 taskkill 이 "Access is denied" 로 실패한다. 그래서 아래에서 한 번 더
-REM 확인하고, 남아 있으면 빌드를 시작하기 전에 멈춘다(빌드에 몇 분이 걸리는데
-REM 끝난 뒤 복사에서 실패하면 그 시간을 통째로 버리게 된다).
-taskkill /F /IM winguard.exe >nul 2>&1
-taskkill /F /IM WinGuard-x64.exe >nul 2>&1
-taskkill /F /IM WinGuard-arm64.exe >nul 2>&1
+REM 툴체인 경로 기본값. 다른 위치에 설치했다면 이 스크립트를 실행하기 전에
+REM 같은 이름의 환경변수를 설정하면 그 값이 우선한다.
+REM (사용자명이 들어가는 경로를 저장소에 커밋하지 않으려고 여기에 둔다.
+REM  ninja 는 PATH 에서 찾으므로 경로를 지정하지 않는다)
+if not defined LLVM_BIN set "LLVM_BIN=C:\Program Files\LLVM\bin"
+if not defined LIBCLANG_PATH set "LIBCLANG_PATH=%LLVM_BIN%"
+if not defined CMAKE set "CMAKE=C:\Program Files\CMake\bin\cmake.exe"
+if not defined CMAKE_GENERATOR set "CMAKE_GENERATOR=Ninja"
 
-for %%P in (winguard.exe WinGuard-x64.exe WinGuard-arm64.exe) do (
-  tasklist /FI "IMAGENAME eq %%P" 2>nul | find /I "%%P" >nul && (
-    echo.
-    echo [오류] %%P 이^(가^) 아직 실행 중입니다.
-    echo        관리자 권한으로 실행된 앱은 이 스크립트에서 종료할 수 없습니다.
-    echo        앱을 직접 닫은 뒤 다시 실행하세요.
-    exit /b 1
-  )
-)
+REM llama.cpp 는 ARM64 에서 MSVC 를 거부하고 clang 을 요구한다.
+REM x64 는 ARM64 호스트에서 크로스 컴파일이라 네이티브 clang-cl 에 --target 을 준다
+REM (MSVC 는 Hostarm64->x64 툴셋을 제공하지 않아 cl.exe 는 에뮬레이션으로 돈다).
+if not defined CC_aarch64_pc_windows_msvc set "CC_aarch64_pc_windows_msvc=%LLVM_BIN%\clang-cl.exe"
+if not defined CXX_aarch64_pc_windows_msvc set "CXX_aarch64_pc_windows_msvc=%LLVM_BIN%\clang-cl.exe"
+if not defined CC_x86_64_pc_windows_msvc set "CC_x86_64_pc_windows_msvc=%LLVM_BIN%\clang-cl.exe"
+if not defined CXX_x86_64_pc_windows_msvc set "CXX_x86_64_pc_windows_msvc=%LLVM_BIN%\clang-cl.exe"
+if not defined CFLAGS_x86_64_pc_windows_msvc set "CFLAGS_x86_64_pc_windows_msvc=--target=x86_64-pc-windows-msvc"
+if not defined CXXFLAGS_x86_64_pc_windows_msvc set "CXXFLAGS_x86_64_pc_windows_msvc=--target=x86_64-pc-windows-msvc"
+
+set "PATH=%LLVM_BIN%;%PATH%"
+REM 실행 중인 인스턴스 확인은 아키텍처별로 :ensure_free 에서 처리한다.
+REM 한쪽만 빌드할 때 다른 쪽 앱이 떠 있는 것은 문제가 되지 않는다.
 
 if /i "%ARCH%"=="arm64" goto :arm64
 
 :x64
+call :ensure_free WinGuard-x64.exe
+if errorlevel 1 exit /b 1
 echo.
 echo ===== x64 빌드 =====
 REM 호스트가 ARM64 이므로 x64 는 크로스 컴파일.
@@ -70,6 +75,8 @@ if errorlevel 1 exit /b 1
 if /i "%ARCH%"=="x64" goto :done
 
 :arm64
+call :ensure_free WinGuard-arm64.exe
+if errorlevel 1 exit /b 1
 echo.
 echo ===== ARM64 빌드 =====
 REM 호스트가 ARM64 이므로 네이티브 빌드. Hostarm64\arm64\cl.exe (ARM64 바이너리)를
@@ -94,4 +101,24 @@ exit /b 0
 :novs
 echo [오류] vcvarsall.bat 을 찾을 수 없습니다.
 echo        Visual Studio Build Tools 를 설치하거나, VCVARS 환경변수로 경로를 지정하세요.
+exit /b 1
+
+REM ── 서브루틴 ────────────────────────────────────────────────────
+REM %1 = release\ 로 복사할 실행 파일명. 이 파일이 실행 중이면 복사가 잠긴다.
+REM 종료를 시도하되, 앱은 requireAdministrator 로 뜨므로 이 스크립트가 관리자
+REM 권한이 아니면 taskkill 이 "Access is denied" 로 실패한다. 그래서 다시 확인해
+REM 빌드를 시작하기 전에 멈춘다(빌드가 몇 분인데 끝나고 복사에서 실패하면
+REM 그 시간을 통째로 버린다). 한쪽만 빌드할 때 다른 쪽 앱은 검사하지 않는다.
+:ensure_free
+taskkill /F /IM winguard.exe >nul 2>&1
+taskkill /F /IM %~1 >nul 2>&1
+tasklist /FI "IMAGENAME eq winguard.exe" 2>nul | find /I "winguard.exe" >nul && goto :still_running
+tasklist /FI "IMAGENAME eq %~1" 2>nul | find /I "%~1" >nul && goto :still_running
+exit /b 0
+
+:still_running
+echo.
+echo [오류] 실행 중인 WinGuard 를 종료하지 못했습니다 ^(%~1^).
+echo        관리자 권한으로 실행된 앱은 이 스크립트에서 종료할 수 없습니다.
+echo        해당 앱을 직접 닫은 뒤 다시 실행하세요.
 exit /b 1

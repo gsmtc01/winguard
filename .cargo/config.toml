@@ -1,0 +1,50 @@
+# 이 파일은 저장소에 포함된다. 배포 결과물의 정확성에 직결되는 설정만 둔다.
+#
+# 머신마다 다른 툴체인 경로는 여기 두지 않는다. build.bat 이 표준 설치 경로를
+# 기본값으로 넣어 주고, 다른 곳에 설치했다면 실제 환경변수로 덮어쓰면 된다.
+# (cargo 의 [env] 는 이미 설정된 환경변수를 덮어쓰지 않는다)
+#
+# 이 파일이 src-tauri/ 가 아니라 저장소 루트에 있는 이유: cargo 는 설정을 현재
+# 작업 디렉토리에서 위로 올라가며 찾는다. src-tauri/ 안에 두면 루트에서
+# `--manifest-path` 로 실행하는 명령(pre-commit 훅 등)에 적용되지 않는다.
+#
+# 타겟은 여기서 고정하지 않는다. x64 / ARM64 를 모두 빌드해야 하므로
+# build.bat 이 `--target` 으로 명시한다.
+
+# ── CRT 정적 링크 ───────────────────────────────────────────────
+#
+# 기본값(동적 CRT)으로 빌드하면 실행 파일이 MSVCP140.dll 에 의존한다. 이 DLL 은
+# Windows 에 포함되어 있지 않고 Visual C++ 재배포 패키지에 들어 있어서, 개발
+# 도구가 없는 PC 에서는 "현재 PC에서는 이 앱을 실행할 수 없습니다" 로 실행이
+# 막힌다. 설치 과정 없는 포터블 실행 파일로 배포하므로 재배포 패키지를 전제할
+# 수 없다.
+#
+# 정적 링크를 위해서는 세 곳이 모두 맞아야 한다. 하나라도 빠지면 링크 단계에서
+# LNK2038(RuntimeLibrary 불일치)로 실패하거나, 조용히 DLL 의존이 남는다.
+#   ① rustflags        아래 crt-static
+#   ② llama.cpp 래퍼   ①에 따라 cc 크레이트가 자동으로 -MT 사용
+#   ③ llama.cpp 본체   [env] 의 LLAMA_STATIC_CRT 와 CMAKE_MSVC_RUNTIME_LIBRARY
+#
+# 빌드 후에는 `dumpbin /dependents` 로 MSVCP140.dll 이 없는지 확인한다.
+
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "target-feature=+crt-static"]
+
+[target.aarch64-pc-windows-msvc]
+rustflags = ["-C", "target-feature=+crt-static"]
+
+[env]
+# llama.cpp 는 cmake 로 별도 빌드되므로 rustflags 가 전해지지 않는다.
+# llama-cpp-sys-2 는 이 값이 정확히 "1" 일 때만 정적 CRT 로 빌드한다.
+LLAMA_STATIC_CRT = "1"
+
+# 위 설정만으로는 부족하다. cmake 크레이트의 static_crt 는 컴파일 플래그에 -MT 를
+# 넣을 뿐이고, CMake 는 CMAKE_MSVC_RUNTIME_LIBRARY 라는 별도 추상화로 런타임을
+# 관리한다. 기본값이 MultiThreadedDLL 이라 생성 단계에서 /MD 가 뒤에 붙어 -MT 를
+# 덮어쓴다. llama-cpp-sys-2 의 build.rs 가 CMAKE_ 로 시작하는 환경변수를 그대로
+# cmake define 으로 넘겨주므로 여기서 직접 지정한다.
+CMAKE_MSVC_RUNTIME_LIBRARY = "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+
+# 한국어 Windows(CP949)에서 MSVC 가 UTF-8 소스를 올바르게 읽도록 강제한다.
+# /EHsc: llama.cpp 의 jinja 코드가 예외를 사용한다.
+CL = "/utf-8 /EHsc"

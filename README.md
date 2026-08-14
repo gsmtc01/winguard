@@ -76,9 +76,33 @@ AI 분석을 처음 사용할 때 약 3GB의 모델 파일을 내려받습니다
 - Visual Studio 2022 Build Tools (Desktop development with C++, ARM64 빌드 도구 포함)
 - LLVM/clang, CMake, Ninja (`llama-cpp-sys-2` 빌드에 필요)
 
-`.cargo/config.toml.example`을 같은 폴더에 `config.toml`로 복사한 뒤, 안에 적힌 툴체인 경로를 본인 머신에 맞게 수정하세요. 이 파일은 머신마다 경로가 달라 git에 포함되지 않습니다.
+LLVM과 CMake를 기본 경로(`C:\Program Files\LLVM`, `C:\Program Files\CMake`)에 설치했고 ninja가 PATH에 있다면 별도 설정 없이 빌드됩니다. 다른 위치에 설치했다면 `build.bat` 실행 전에 해당 환경변수를 지정하세요.
 
-이 설정 파일이 `src-tauri/`가 아니라 저장소 루트에 있는 이유가 있습니다. cargo는 설정 파일을 현재 작업 디렉토리에서 위로 올라가며 찾습니다. `src-tauri/` 안에 두면 루트에서 `cargo clippy --manifest-path src-tauri/Cargo.toml`처럼 실행할 때 설정이 적용되지 않아, llama.cpp 컴파일이 인코딩 오류로 실패합니다. pre-commit 훅이 이 방식으로 실행합니다.
+```bash
+set LLVM_BIN=D:\tools\LLVM\bin
+```
+
+`LLVM_BIN`, `LIBCLANG_PATH`, `CMAKE`, `CMAKE_GENERATOR`, `CC_<target>`, `CXX_<target>`을 이런 식으로 덮어쓸 수 있습니다. `build.bat`은 이미 설정된 환경변수를 건드리지 않습니다.
+
+### 빌드 설정에 관해
+
+`.cargo/config.toml`은 저장소에 포함되어 있습니다. 여기에 든 CRT 정적 링크 설정이 빠지면 실행 파일이 `MSVCP140.dll`에 의존하게 되고, Visual C++ 재배포 패키지가 없는 PC에서 실행이 막힙니다. 따라서 이 파일은 개인 설정이 아니라 배포 결과물의 정확성에 직결되는 파일입니다.
+
+정적 링크를 위해서는 세 곳이 모두 맞아야 하며, 하나라도 빠지면 링크 단계에서 `LNK2038`로 실패하거나 조용히 DLL 의존이 남습니다.
+
+| 대상 | 설정 |
+|---|---|
+| Rust 코드 | `rustflags`의 `target-feature=+crt-static` |
+| llama.cpp 래퍼 | 위 설정에 따라 cc 크레이트가 자동 처리 |
+| llama.cpp 본체 | `LLAMA_STATIC_CRT`와 `CMAKE_MSVC_RUNTIME_LIBRARY` |
+
+빌드한 실행 파일은 의존 DLL을 확인하세요. `MSVCP140.dll`이나 `VCRUNTIME140.dll`이 보이면 안 됩니다.
+
+```bash
+dumpbin /dependents release\WinGuard-x64.exe
+```
+
+이 설정 파일이 `src-tauri/`가 아니라 저장소 루트에 있는 이유도 있습니다. cargo는 설정 파일을 현재 작업 디렉토리에서 위로 올라가며 찾습니다. `src-tauri/` 안에 두면 루트에서 `cargo clippy --manifest-path src-tauri/Cargo.toml`처럼 실행할 때 설정이 적용되지 않아, llama.cpp 컴파일이 인코딩 오류로 실패합니다. pre-commit 훅이 이 방식으로 실행합니다.
 
 ### 실행
 
