@@ -12,7 +12,7 @@ jobs:
     name: Rust 검사
     runs-on: windows-latest   # Windows API 의존 — ubuntu 사용 불가
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Rust stable 설치
         uses: dtolnay/rust-toolchain@stable
@@ -40,17 +40,19 @@ jobs:
     name: 프론트엔드 검사
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Node.js 설치
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: pnpm 설치
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v6
         with:
-          version: 9
+          # 로컬 개발 환경과 동일한 버전으로 고정한다. 버전이 어긋나면
+          # 플래그 해석이 달라져 로컬에서 통과한 명령이 CI 에서 깨진다.
+          version: 10.33.2
 
       - name: 의존성 설치
         run: pnpm install --frozen-lockfile
