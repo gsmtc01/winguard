@@ -12,11 +12,13 @@ export const getStartupEnabled = (): Promise<boolean> => invoke<boolean>("get_st
 export const setStartupEnabled = (enable: boolean): Promise<void> =>
   invoke<void>("set_startup_enabled", { enable });
 
-export interface RegDwordQuery {
+// invoke() 의 인자 타입은 Record<string, unknown> 이다. interface 는 암묵적
+// 인덱스 시그니처를 얻지 못해 대입이 거부되므로 type 별칭으로 선언한다.
+export type RegDwordQuery = {
   hive: string;
   path: string;
   name: string;
-}
+};
 
 /** 레지스트리 DWORD 값을 읽는다. 키가 없으면 reject 된다. */
 export const readRegDword = (query: RegDwordQuery): Promise<number> =>

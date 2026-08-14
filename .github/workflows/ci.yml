@@ -60,8 +60,11 @@ jobs:
       - name: 린트 (경고 = 실패)
         run: pnpm eslint src --ext .ts,.tsx --max-warnings 0
 
-      - name: 타입 검사
-        run: pnpm tsc --noEmit
+      # `tsc --noEmit` 은 루트 tsconfig.json 이 files:[] + references 뿐이라
+      # 아무 파일도 검사하지 않는다(무의미한 통과). 실제 빌드와 동일하게
+      # `tsc -b` + vite build 를 돌려서 타입 오류와 번들 오류를 모두 잡는다.
+      - name: 빌드 (타입 검사 포함)
+        run: pnpm build
 
       # `pnpm test --run` 은 pnpm 버전에 따라 --run 을 pnpm 자신의 옵션으로
       # 해석해 실패한다(pnpm 9: "Unknown option: 'run'"). vitest 를 직접 호출한다.
