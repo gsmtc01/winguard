@@ -1,0 +1,68 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "import"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript"
+  ],
+  "rules": {
+    "no-console": "error",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-explicit-any": "error",
+    "prefer-const": "error",
+
+    "import/default": "off",
+    "import/no-named-as-default-member": "off",
+
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@tauri-apps/api/core"],
+            "importNames": ["invoke"],
+            "message": "invoke() 는 src/api/*.ts 에서만 호출한다. 컴포넌트에서 직접 import 금지."
+          }
+        ]
+      }
+    ],
+
+    "import/no-restricted-paths": [
+      "error",
+      {
+        "zones": [
+          {
+            "target": "./src/components",
+            "from": "./src/api/checks.ts",
+            "message": "컴포넌트는 api/checks.ts 를 직접 import 하지 않는다. store/checkStore 를 통해 데이터를 읽는다."
+          },
+          {
+            "target": "./src/lib",
+            "from": "./src/store",
+            "message": "lib/ 는 순수 함수만 포함한다. 스토어 의존 금지."
+          }
+        ]
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.app.json"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "files": ["src/api/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ]
+}

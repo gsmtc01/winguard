@@ -1,0 +1,23 @@
+node_modules/
+dist/
+release/
+src-tauri/target/
+src-tauri/gen/
+*.local
+.env
+
+# 머신마다 툴체인 경로가 달라 로컬 전용 — config.toml.example 을 복사해서 쓴다
+src-tauri/.cargo/config.toml
+
+# Claude Code 로컬 설정 — 머신별 절대 경로가 들어간다
+.claude/settings.local.json
+
+# 모델은 런타임에 HuggingFace 에서 내려받는다 (저장소에 커밋 금지, 파일당 3GB)
+models/
+*.gguf
+*.gguf.part
+
+# 웹사이트 디자인 브리프 — 별도 사이트 저장소에서 관리
+WEBSITE_STITCH_BRIEF.md
+
+build_log.txt

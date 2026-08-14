@@ -1,0 +1,42 @@
+# .pre-commit-config.yaml
+# 설치: pip install pre-commit && pre-commit install
+# 수동 전체 실행: pre-commit run --all-files
+
+repos:
+  # Rust 포맷 검사
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo fmt
+        entry: cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
+        language: system
+        pass_filenames: false
+        files: \.rs$
+
+  # Rust 린트 (경고 = 오류)
+      - id: cargo-clippy
+        name: cargo clippy
+        entry: cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
+        language: system
+        pass_filenames: false
+        files: \.rs$
+
+  # TypeScript 린트
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: pnpm eslint src --ext .ts,.tsx --max-warnings 0
+        language: system
+        pass_filenames: false
+        files: \.(ts|tsx)$
+
+  # 공백 및 파일 끝 정리
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-json
+        files: eol-table\.json$

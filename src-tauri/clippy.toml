@@ -1,0 +1,6 @@
+# clippy.toml
+# clippy.toml 에는 임계값 설정만 가능하다.
+# unwrap_used 등 lint 활성화는 main.rs 의 #![warn(clippy::...)] 속성으로 처리한다.
+
+cognitive-complexity-threshold = 20
+too-many-arguments-threshold = 8

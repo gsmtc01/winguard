@@ -1,0 +1,31 @@
+# 로컬 빌드용 설정 템플릿
+#
+# 이 파일을 같은 폴더에 `config.toml` 로 복사한 뒤, 아래 경로를 본인 머신에 맞게 고친다.
+# `config.toml` 자체는 머신마다 경로가 달라 .gitignore 되어 있다.
+#
+# 필요한 사전 설치:
+#   - Visual Studio 2022 (Desktop development with C++, ARM64 빌드 도구 포함)
+#   - LLVM/clang   : llama.cpp 가 ARM64 에서 MSVC 를 거부하고 clang 을 요구
+#   - CMake, Ninja : llama-cpp-sys-2 빌드가 cmake 를 직접 호출
+#
+# 타겟(target)은 여기에 고정하지 않는다. x64 / ARM64 를 모두 빌드해야 하므로
+# build.bat 에서 `--target` 으로 명시적으로 지정한다.
+
+[env]
+LIBCLANG_PATH = "C:\\Program Files\\LLVM\\bin"
+
+# 한국어 Windows(CP949) 환경에서 MSVC 가 UTF-8 소스를 올바르게 읽도록 강제
+# /EHsc: C++ 예외 처리 활성화 (llama.cpp 의 jinja 코드가 throw 사용)
+CL = "/utf-8 /EHsc"
+
+# llama-cpp-sys-2 빌드는 cmake 를 직접 호출 — 풀패스 지정
+CMAKE = "C:\\Program Files\\CMake\\bin\\cmake.exe"
+
+# llama.cpp 는 ARM64 에서 MSVC 를 거부하고 clang 을 요구 → clang-cl 사용
+CC_aarch64-pc-windows-msvc = "C:\\Program Files\\LLVM\\bin\\clang-cl.exe"
+CXX_aarch64-pc-windows-msvc = "C:\\Program Files\\LLVM\\bin\\clang-cl.exe"
+
+# Ninja 제너레이터를 강제해서 cmake 가 -G "Visual Studio" 대신 clang-cl 을 사용하도록
+CMAKE_GENERATOR = "Ninja"
+# ↓ 본인 머신의 ninja.exe 경로로 교체할 것 (`where ninja` 로 확인)
+CMAKE_MAKE_PROGRAM = "C:\\path\\to\\ninja.exe"

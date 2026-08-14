@@ -1,0 +1,69 @@
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  rust:
+    name: Rust 검사
+    runs-on: windows-latest   # Windows API 의존 — ubuntu 사용 불가
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rust stable 설치
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: 캐시
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: 포맷 검사
+        run: cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
+
+      - name: 타입 검사
+        run: cargo check --manifest-path src-tauri/Cargo.toml
+
+      - name: 린트 (경고 = 실패)
+        run: cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings
+
+      - name: 단위 테스트
+        run: cargo test --manifest-path src-tauri/Cargo.toml
+
+  frontend:
+    name: 프론트엔드 검사
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Node.js 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: pnpm 설치
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: 의존성 설치
+        run: pnpm install --frozen-lockfile
+
+      - name: 린트 (경고 = 실패)
+        run: pnpm eslint src --ext .ts,.tsx --max-warnings 0
+
+      - name: 타입 검사
+        run: pnpm tsc --noEmit
+
+      - name: 단위 테스트
+        run: pnpm test --run
+
+      # 테스트 커버리지 70% 미만이면 CI 실패
+      - name: 커버리지 확인
+        run: pnpm test --run --coverage --coverage.thresholds.lines=70
