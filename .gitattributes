@@ -1,0 +1,15 @@
+# 배치 파일은 반드시 CRLF — cmd.exe 배치 파서가 LF 만 있으면 줄을 뭉갠다
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 나머지 텍스트는 저장소에 LF 로 보관
+*.rs      text eol=lf
+*.ts      text eol=lf
+*.tsx     text eol=lf
+*.js      text eol=lf
+*.json    text eol=lf
+*.toml    text eol=lf
+*.yml     text eol=lf
+*.md      text eol=lf
+*.css     text eol=lf
+*.html    text eol=lf
