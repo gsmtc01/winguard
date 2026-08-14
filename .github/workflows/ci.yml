@@ -61,10 +61,12 @@ jobs:
       - name: 타입 검사
         run: pnpm tsc --noEmit
 
+      # `pnpm test --run` 은 pnpm 버전에 따라 --run 을 pnpm 자신의 옵션으로
+      # 해석해 실패한다(pnpm 9: "Unknown option: 'run'"). vitest 를 직접 호출한다.
       - name: 단위 테스트
-        run: pnpm test --run
+        run: pnpm vitest run
 
       # 커버리지 하한선(래칫). 목표는 70% 지만 현재 8.86% 라 한 번에 못 올린다.
       # 회귀 방지용으로 현재 수준에 걸어두고, 테스트를 추가할 때마다 이 숫자를 올린다.
       - name: 커버리지 확인
-        run: pnpm test --run --coverage --coverage.thresholds.lines=8
+        run: pnpm vitest run --coverage --coverage.thresholds.lines=8
