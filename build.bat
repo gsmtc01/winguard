@@ -33,10 +33,24 @@ if not exist "!VCVARS!" goto :novs
 echo [정보] vcvarsall = !VCVARS!
 
 set "PATH=C:\Program Files\LLVM\bin;%PATH%"
-REM 실행 중이면 복사 단계에서 파일이 잠긴다. release\ 로 복사한 이름까지 함께 종료한다.
+REM 실행 중이면 복사 단계에서 파일이 잠긴다. 먼저 종료를 시도한다.
+REM 단, 앱은 requireAdministrator 로 실행되므로 이 스크립트가 관리자 권한이
+REM 아니면 taskkill 이 "Access is denied" 로 실패한다. 그래서 아래에서 한 번 더
+REM 확인하고, 남아 있으면 빌드를 시작하기 전에 멈춘다(빌드에 몇 분이 걸리는데
+REM 끝난 뒤 복사에서 실패하면 그 시간을 통째로 버리게 된다).
 taskkill /F /IM winguard.exe >nul 2>&1
 taskkill /F /IM WinGuard-x64.exe >nul 2>&1
 taskkill /F /IM WinGuard-arm64.exe >nul 2>&1
+
+for %%P in (winguard.exe WinGuard-x64.exe WinGuard-arm64.exe) do (
+  tasklist /FI "IMAGENAME eq %%P" 2>nul | find /I "%%P" >nul && (
+    echo.
+    echo [오류] %%P 이^(가^) 아직 실행 중입니다.
+    echo        관리자 권한으로 실행된 앱은 이 스크립트에서 종료할 수 없습니다.
+    echo        앱을 직접 닫은 뒤 다시 실행하세요.
+    exit /b 1
+  )
+)
 
 if /i "%ARCH%"=="arm64" goto :arm64
 

@@ -9,7 +9,11 @@ import { saveVtApiKey, hasVtApiKey, deleteVtApiKey } from "@/api/virustotal";
 import { useModelStore, fmtBytes } from "@/store/modelStore";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { resetAllData, resetScoreHistory, resetVtHistory } from "@/store/dataReset";
+import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import {
+  applyUpdate,
+  downloadUpdate,
+  type UpdateProgress,
   checkForUpdate,
   getUpdateRepo,
   markAutoChecked,
@@ -600,6 +604,45 @@ function UpdateSection() {
   const [repo, setRepo] = useState("");
   const [notesOpen, setNotesOpen] = useState(false);
 
+  // 앱 내 업데이트 상태. 사용자가 버튼을 눌러야만 시작된다.
+  const [installPhase, setInstallPhase] = useState<"idle" | "downloading" | "applying">("idle");
+  const [installPct, setInstallPct] = useState(0);
+  const [installErr, setInstallErr] = useState("");
+
+  useEffect(() => {
+    let unlisten: UnlistenFn | null = null;
+    let alive = true;
+    listen<UpdateProgress>("update:download-progress", (e) => {
+      setInstallPct(e.payload.percent);
+    })
+      .then((fn) => {
+        if (alive) unlisten = fn;
+        else fn();
+      })
+      .catch(() => { /* IPC 미지원 환경 */ });
+    return () => { alive = false; unlisten?.(); };
+  }, []);
+
+  const runSelfUpdate = useCallback(async (target: UpdateInfo) => {
+    if (!target.download_url || !target.download_name || !target.download_sha256) return;
+    setInstallErr("");
+    setInstallPct(0);
+    setInstallPhase("downloading");
+    try {
+      const path = await downloadUpdate(
+        target.download_url,
+        target.download_name,
+        target.download_sha256,
+      );
+      setInstallPhase("applying");
+      // 성공하면 새 버전이 실행되고 이 프로세스는 곧 종료된다.
+      await applyUpdate(path);
+    } catch (e) {
+      setInstallErr(String(e));
+      setInstallPhase("idle");
+    }
+  }, []);
+
   const runCheck = useCallback(async (auto: boolean) => {
     setPhase("checking");
     setErrMsg("");
@@ -691,12 +734,31 @@ function UpdateSection() {
 
           {info.update_available && (
             <div className="flex flex-wrap items-center gap-2 pt-0.5">
+              {/* 앱 내 업데이트는 해시가 확인될 때만 제공한다.
+                  검증 없이 실행 파일을 갈아끼우지 않는다. */}
+              {info.download_url && info.download_sha256 && (
+                <button
+                  onClick={() => void runSelfUpdate(info)}
+                  disabled={installPhase === "downloading" || installPhase === "applying"}
+                  className="rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-accent-ink transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {installPhase === "downloading"
+                    ? `내려받는 중… ${installPct}%`
+                    : installPhase === "applying"
+                      ? "교체 중…"
+                      : "지금 업데이트"}
+                </button>
+              )}
               {info.download_url && (
                 <button
                   onClick={() => openLink(info.download_url as string)}
-                  className="rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-accent-ink transition hover:brightness-105"
+                  className={
+                    info.download_sha256
+                      ? "rounded-lg border border-border px-3 py-1.5 text-xs text-text-2 transition hover:bg-hover"
+                      : "rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-accent-ink transition hover:brightness-105"
+                  }
                 >
-                  다운로드
+                  브라우저로 받기
                   {info.download_size ? ` (${fmtBytes(info.download_size)})` : ""}
                 </button>
               )}
@@ -713,6 +775,13 @@ function UpdateSection() {
               이 릴리즈에 설치 파일이 없습니다. 릴리즈 페이지에서 직접 확인하세요.
             </p>
           )}
+          {info.update_available && info.download_url && !info.download_sha256 && (
+            <p className="text-xs text-text-3">
+              이 릴리즈에 무결성 확인용 .sha256 파일이 없어 앱 내 업데이트를 제공하지 않습니다.
+              브라우저로 받아 직접 교체하세요.
+            </p>
+          )}
+          {installErr && <p className="text-xs text-danger">{installErr}</p>}
         </div>
       )}
 

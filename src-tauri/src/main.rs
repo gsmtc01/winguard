@@ -24,7 +24,9 @@ use commands::process_commands::scan_processes;
 use commands::quarantine_commands::{
     quarantine_delete, quarantine_list, quarantine_restore, quarantine_save, read_reg_dword,
 };
-use commands::update_commands::{check_for_update, update_repo};
+use commands::update_commands::{
+    check_for_update, cleanup_previous_update, update_apply, update_download, update_repo,
+};
 use commands::vt_commands::{delete_vt_api_key, has_vt_api_key, save_vt_api_key, scan_file_vt};
 use engine::{
     rules::apply_compound_rules,
@@ -143,6 +145,9 @@ fn main() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
+            // 이전 업데이트가 남긴 <이름>.old 정리. 교체 직후 첫 실행에서 지워진다.
+            cleanup_previous_update();
+
             // ── 트레이 메뉴 ──────────────────────────────────────────
             let show_item = MenuItemBuilder::with_id("show", "열기").build(app)?;
             let quit_item = MenuItemBuilder::with_id("quit", "종료").build(app)?;
@@ -256,6 +261,8 @@ fn main() {
             read_reg_dword,
             check_for_update,
             update_repo,
+            update_download,
+            update_apply,
         ])
         .run(tauri::generate_context!())
         .unwrap_or_else(|e| {
