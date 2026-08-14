@@ -61,6 +61,19 @@ fn install_dir() -> PathBuf {
         .unwrap_or_else(|| PathBuf::from("C:\\Program Files\\WinGuard"))
 }
 
+/// 모델 기본 저장 폴더.
+///
+/// 예전에는 exe 옆(`install_dir()`)에 저장했다. MSI 설치본은 경로가
+/// `C:\Program Files\WinGuard` 로 고정이라 문제가 없었지만, 포터블 실행 파일로
+/// 바뀌면서 사용자가 exe 를 어디에 두느냐에 따라 3GB 모델이 다운로드 폴더나
+/// USB 에 생기고, exe 를 옮기거나 지워도 그대로 남는다(언인스톨러가 없다).
+/// 사용자별 로컬 데이터 폴더로 고정한다. 폴더를 직접 고르는 기능은 그대로다.
+fn default_model_dir() -> PathBuf {
+    dirs::data_local_dir()
+        .map(|d| d.join("WinGuard").join("models"))
+        .unwrap_or_else(install_dir)
+}
+
 fn settings_path() -> PathBuf {
     dirs::data_local_dir()
         .unwrap_or_default()
@@ -86,9 +99,12 @@ fn save_model_path_to_settings(path: &str) -> Result<(), String> {
 /// 실제로 사용할 모델 파일 경로.
 ///
 /// ① 설정에 저장된 경로에 파일이 있으면 그것
-/// ② 없으면 기본 폴더의 규격 파일명
-/// ③ 그것도 없으면 기본 폴더의 옛 파일명(구버전 설치본 재사용)
+/// ② 없으면 기본 폴더 → exe 옆(구버전 기본 위치) 순으로 규격 파일명을 찾는다
+/// ③ 그것도 없으면 같은 순서로 옛 파일명(구버전 설치본 재사용)
 /// ④ 전부 없으면 "있어야 할 위치"를 돌려준다(오류 메시지에 경로가 찍히도록)
+///
+/// ②에서 exe 옆까지 뒤지는 이유: 기본 폴더가 바뀌었다는 이유로 이미 받아둔
+/// 3GB 를 다시 받게 해서는 안 된다.
 fn active_model_path() -> PathBuf {
     let from_settings = load_model_path_from_settings();
     if let Some(p) = &from_settings {
@@ -97,15 +113,22 @@ fn active_model_path() -> PathBuf {
         }
     }
 
-    let dir = install_dir();
-    let canonical = dir.join(MODEL_FILENAME);
-    if canonical.exists() {
-        return canonical;
-    }
-    for legacy in LEGACY_MODEL_FILENAMES {
-        let p = dir.join(legacy);
+    let default_dir = default_model_dir();
+    let canonical = default_dir.join(MODEL_FILENAME);
+    let search_dirs = [default_dir, install_dir()];
+
+    for dir in &search_dirs {
+        let p = dir.join(MODEL_FILENAME);
         if p.exists() {
             return p;
+        }
+    }
+    for dir in &search_dirs {
+        for legacy in LEGACY_MODEL_FILENAMES {
+            let p = dir.join(legacy);
+            if p.exists() {
+                return p;
+            }
         }
     }
 
@@ -154,7 +177,7 @@ pub fn llm_model_path() -> String {
 
 #[tauri::command]
 pub fn llm_default_model_path() -> String {
-    install_dir()
+    default_model_dir()
         .join(MODEL_FILENAME)
         .to_string_lossy()
         .to_string()
@@ -163,7 +186,7 @@ pub fn llm_default_model_path() -> String {
 /// 기본 저장 "폴더". 파일명은 WinGuard 가 정하므로 폴더만 고르게 한다.
 #[tauri::command]
 pub fn llm_default_model_dir() -> String {
-    install_dir().to_string_lossy().to_string()
+    default_model_dir().to_string_lossy().to_string()
 }
 
 #[tauri::command]
@@ -172,7 +195,7 @@ pub fn llm_model_info() -> ModelInfo {
         file_name: MODEL_FILENAME.to_string(),
         display_name: MODEL_DISPLAY_NAME.to_string(),
         size_bytes: MODEL_SIZE_BYTES,
-        default_dir: install_dir().to_string_lossy().to_string(),
+        default_dir: default_model_dir().to_string_lossy().to_string(),
         url: MODEL_URL.to_string(),
     }
 }
@@ -197,7 +220,7 @@ pub fn llm_set_model_path(path: String) -> Result<(), String> {
 #[tauri::command]
 pub async fn llm_download_model(app: tauri::AppHandle, dest_dir: String) -> Result<(), String> {
     let dir = if dest_dir.trim().is_empty() {
-        install_dir()
+        default_model_dir()
     } else {
         PathBuf::from(&dest_dir)
     };
@@ -547,10 +570,14 @@ pub fn llm_delete_model() -> Result<(), String> {
 
     // 3. 같은 폴더에 남아 있을 수 있는 옛 파일명·중단된 .part 도 함께 정리한다.
     //    (하나만 지우면 "제거"했는데 다시 설치됨으로 보이는 일이 생긴다)
-    let mut dirs = vec![install_dir()];
-    if let Some(parent) = path.parent() {
-        if !dirs.contains(&parent.to_path_buf()) {
-            dirs.push(parent.to_path_buf());
+    //    기본 폴더가 바뀌었으므로 구버전 위치(exe 옆)까지 함께 훑는다.
+    let mut dirs = vec![default_model_dir()];
+    for d in [Some(install_dir()), path.parent().map(|p| p.to_path_buf())]
+        .into_iter()
+        .flatten()
+    {
+        if !dirs.contains(&d) {
+            dirs.push(d);
         }
     }
     for dir in dirs {
@@ -1413,6 +1440,39 @@ mod tests {
         assert!(info.size_bytes > 0);
         assert!(!info.display_name.is_empty());
         assert!(!info.default_dir.is_empty());
+    }
+
+    #[test]
+    fn default_model_dir_is_not_next_to_the_exe() {
+        // 포터블 실행 파일이라 exe 옆에 3GB 를 두면 안 된다.
+        // (exe 를 옮기거나 지워도 모델이 남고, USB·다운로드 폴더에 생긴다)
+        let dir = default_model_dir();
+        assert_ne!(
+            dir,
+            install_dir(),
+            "기본 모델 폴더가 exe 폴더와 같으면 안 된다"
+        );
+        assert!(
+            dir.ends_with("models"),
+            "기본 폴더는 models 로 끝나야 한다: {}",
+            dir.to_string_lossy()
+        );
+        assert!(
+            dir.to_string_lossy().contains("WinGuard"),
+            "제품 폴더 아래여야 한다: {}",
+            dir.to_string_lossy()
+        );
+    }
+
+    #[test]
+    fn model_info_default_dir_matches_default_model_dir() {
+        // UI 가 안내하는 저장 위치와 실제 다운로드 위치가 어긋나면 안 된다.
+        let info = llm_model_info();
+        assert_eq!(
+            info.default_dir,
+            default_model_dir().to_string_lossy().to_string()
+        );
+        assert!(llm_default_model_path().ends_with(MODEL_FILENAME));
     }
 
     #[test]

@@ -4,6 +4,7 @@
 import { useRef, useEffect } from "react";
 import { useLlmStore, type LlmTab } from "@/store/llmStore";
 import { useUIStore } from "@/store/uiStore";
+import { useModelStore, fmtBytes } from "@/store/modelStore";
 import { MarkdownBlock } from "./MarkdownBlock";
 import { IconSparkle } from "./icons";
 import type { ScanReport } from "@/store/checkStore";
@@ -16,12 +17,17 @@ interface Props {
 
 function NoModelBanner() {
   const { openSettings } = useUIStore();
+  // 크기를 문구에 박아두면 모델을 교체할 때 어긋난다(실제 2.89 GB 를 1.5 GB 로
+  // 안내하고 있었다). 백엔드가 알려주는 실제 크기를 쓰고, 아직 조회 전이면
+  // 어림값을 보여준다.
+  const info = useModelStore((s) => s.info);
+  const sizeText = info ? fmtBytes(info.size_bytes) : "약 3 GB";
   return (
     <div className="flex items-center justify-between gap-4 rounded-xl border border-warn bg-warn-bg p-4">
       <div>
         <p className="text-sm font-semibold text-warn">AI 모델 미설치</p>
         <p className="mt-0.5 text-xs text-text-2">
-          AI 분석을 사용하려면 On-Device AI 모델을 먼저 다운로드해야 합니다. (약 1.5 GB)
+          AI 분석을 사용하려면 On-Device AI 모델을 먼저 다운로드해야 합니다. ({sizeText})
         </p>
       </div>
       <button
