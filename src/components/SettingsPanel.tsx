@@ -823,8 +823,10 @@ function AppFooter() {
       <p className="text-xs font-medium text-text-2">WinGuard v{version}</p>
       <p className="mt-0.5 flex items-center justify-center gap-1 text-xs text-text-3">
         <span>On-Device AI ·</span>
-        <button onClick={() => { void openUrl("https://ai.google.dev/gemma/terms"); }} className="hover:underline">
-          Gemma 4 E2B (Apache 2.0 License)
+        {/* Gemma 4 는 Apache 2.0 이다. ai.google.dev/gemma/terms 는 Gemma 1~3 의
+            커스텀 약관 페이지라 라벨과 맞지 않아 Apache 2.0 전문으로 연결한다. */}
+        <button onClick={() => { void openUrl("https://www.apache.org/licenses/LICENSE-2.0"); }} className="hover:underline">
+          Gemma 4 E2B · Google DeepMind (Apache 2.0)
         </button>
       </p>
     </div>
