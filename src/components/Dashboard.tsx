@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { save } from "@tauri-apps/plugin-dialog";
-import { invoke } from "@tauri-apps/api/core";
+import { generateReport } from "@/api/llm";
 import { useCheckStore } from "@/store/checkStore";
 import { writeTextFile } from "@/api/files";
 import { CheckCard } from "./CheckCard";
@@ -293,7 +293,7 @@ export const Dashboard = () => {
     if (!report || reportState === "generating") return;
     setReportState("generating");
     try {
-      const result = await invoke<{ summary: string }>("llm_generate_report", { report });
+      const result = await generateReport(report);
       setReportSummary(result.summary);
       setReportState("ready");
     } catch {

@@ -28,12 +28,17 @@
 import { runScan } from "@/api/checks";
 const report = await runScan();
 
-// store에서 직접 invoke 허용 (LLM/Process/Network)
+// store/*.ts 는 직접 invoke 허용 (.eslintrc.json overrides 에 반영됨)
 import { invoke } from "@tauri-apps/api/core";
 const result = await invoke("llm_analyze", { report });
 
 // 금지: 일반 컴포넌트에서 직접 invoke
 // (예외: CheckCard.tsx → llm_explain_check 단일 항목 설명)
+//
+// 컴포넌트가 쓰는 래퍼:
+//   api/system.ts     시작 프로그램, 레지스트리 읽기, 설정 창 열기
+//   api/quarantine.ts 수정 전 레지스트리 백업
+//   api/llm.ts        스캔 리포트 요약
 ```
 
 ---

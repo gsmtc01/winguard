@@ -63,6 +63,14 @@
       "rules": {
         "no-restricted-imports": "off"
       }
+    },
+    {
+      // src/AGENTS.md §2: store/*.ts 는 invoke() 직접 호출을 허용한다.
+      // CheckCard 는 llm_explain_check 단일 항목 설명에 한해 예외로 명시되어 있다.
+      "files": ["src/store/**/*.ts", "src/components/CheckCard.tsx"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
     }
   ]
 }

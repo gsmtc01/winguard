@@ -1,10 +1,10 @@
 // src/components/SettingsPanel.tsx
 
 import { useCallback, useEffect, useState, type ComponentType } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { getStartupEnabled, setStartupEnabled } from "@/api/system";
 import { useSettingsStore, ACCENTS } from "@/store/settingsStore";
 import { useCheckStore } from "@/store/checkStore";
-import type { Theme, Accent } from "@/store/settingsStore";
+import type { Theme, Accent, ScheduleType } from "@/store/settingsStore";
 import { saveVtApiKey, hasVtApiKey, deleteVtApiKey } from "@/api/virustotal";
 import { useModelStore, fmtBytes } from "@/store/modelStore";
 import { openUrl } from "@tauri-apps/plugin-opener";
@@ -370,7 +370,7 @@ function StartupSection() {
   const [err, setErr] = useState("");
 
   useEffect(() => {
-    invoke<boolean>("get_startup_enabled").then(setEnabled).catch(() => setEnabled(false));
+    getStartupEnabled().then(setEnabled).catch(() => setEnabled(false));
   }, []);
 
   const toggle = async () => {
@@ -378,7 +378,7 @@ function StartupSection() {
     setBusy(true);
     setErr("");
     try {
-      await invoke("set_startup_enabled", { enable: !enabled });
+      await setStartupEnabled(!enabled);
       setEnabled(!enabled);
     } catch (e) {
       setErr(String(e));
@@ -427,7 +427,7 @@ function ScheduleSection() {
           <span className="w-10 text-xs font-medium text-text-2">주기</span>
           <select
             value={type}
-            onChange={(e) => updateSchedule({ type: e.target.value as any })}
+            onChange={(e) => updateSchedule({ type: e.target.value as ScheduleType })}
             className="flex-1 rounded border border-border bg-surface px-2 py-1 text-sm text-text focus:border-accent focus:outline-none"
           >
             <option value="daily">매일</option>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { invoke } from "@tauri-apps/api/core";
+import { readRegDword, runSettingsCommand } from "@/api/system";
+import { saveRegBackup } from "@/api/quarantine";
 import type { RegBackupEntry } from "@/store/quarantineStore";
 
 /** cmd: 접두사 → Tauri 커맨드 매핑 */
@@ -42,7 +43,7 @@ const BACKUP_MAP: Record<string, BackupTemplate[]> = {
 
 /** 레지스트리 값을 읽되, 키가 없으면(정상 상태) fallback 을 사용한다. */
 async function readDwordOrFallback(t: BackupTemplate): Promise<RegBackupEntry> {
-  const original_value = await invoke<number>("read_reg_dword", {
+  const original_value = await readRegDword({
     hive: t.hive,
     path: t.path,
     name: t.name,
@@ -78,7 +79,7 @@ export const FixButton = ({ uri }: { uri: string | null }) => {
       setError(null);
       try {
         const entries = await Promise.all(backupTemplates.map(readDwordOrFallback));
-        await invoke("quarantine_save", {
+        await saveRegBackup({
           entries,
           checkId: uri.replace(/^cmd:/, ""),
           actionLabel: LABEL_MAP[uri] ?? uri,
@@ -92,7 +93,7 @@ export const FixButton = ({ uri }: { uri: string | null }) => {
       setBusy(false);
     }
 
-    invoke(command).catch(() => {});
+    runSettingsCommand(command).catch(() => {});
   };
 
   const label = LABEL_MAP[uri] ?? "설정 열기";
