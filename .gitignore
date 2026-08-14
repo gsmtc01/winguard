@@ -6,8 +6,10 @@ src-tauri/gen/
 *.local
 .env
 
-# 머신마다 툴체인 경로가 달라 로컬 전용 — config.toml.example 을 복사해서 쓴다
-src-tauri/.cargo/config.toml
+# 머신마다 툴체인 경로가 달라 로컬 전용 — config.toml.example 을 복사해서 쓴다.
+# 저장소 루트에 둔다: cargo 는 작업 디렉토리에서 위로 올라가며 설정을 찾으므로
+# 루트에서 실행하든 src-tauri 에서 실행하든 동일하게 적용된다.
+/.cargo/config.toml
 
 # Claude Code 로컬 설정 — 머신별 절대 경로가 들어간다
 .claude/settings.local.json

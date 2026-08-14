@@ -34,7 +34,9 @@ AI 분석 기능을 처음 사용할 때 약 3GB의 모델 파일을 내려받�
 - Visual Studio 2022 — Desktop development with C++ (ARM64 빌드 도구 포함)
 - LLVM/clang, CMake, Ninja — `llama-cpp-sys-2` 빌드에 필요
 
-`src-tauri/.cargo/config.toml.example`을 같은 폴더에 `config.toml`로 복사한 뒤, 안에 적힌 툴체인 경로를 본인 머신에 맞게 수정하세요. 이 파일은 머신마다 경로가 달라 git에 포함되지 않습니다.
+`.cargo/config.toml.example`을 같은 폴더에 `config.toml`로 복사한 뒤, 안에 적힌 툴체인 경로를 본인 머신에 맞게 수정하세요. 이 파일은 머신마다 경로가 달라 git에 포함되지 않습니다.
+
+저장소 루트에 두는 이유가 있습니다. cargo는 설정 파일을 **현재 작업 디렉토리에서 위로 올라가며** 찾습니다. `src-tauri/` 안에 두면 루트에서 `cargo clippy --manifest-path src-tauri/Cargo.toml`처럼 실행할 때 설정이 적용되지 않아, llama.cpp 컴파일이 인코딩 오류로 실패합니다(pre-commit 훅이 이 방식으로 실행합니다).
 
 ### 실행
 
