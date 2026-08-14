@@ -25,6 +25,15 @@ CMAKE = "C:\\Program Files\\CMake\\bin\\cmake.exe"
 CC_aarch64-pc-windows-msvc = "C:\\Program Files\\LLVM\\bin\\clang-cl.exe"
 CXX_aarch64-pc-windows-msvc = "C:\\Program Files\\LLVM\\bin\\clang-cl.exe"
 
+# ARM64 호스트에서 x64 를 빌드하는 경우(크로스 컴파일).
+# MSVC 는 Hostarm64->x64 툴셋을 제공하지 않아 cl.exe 는 에뮬레이션으로 돈다.
+# clang-cl 은 호스트 네이티브 바이너리이면서 --target 으로 x64 코드를 낼 수 있다.
+# x64 호스트에서 빌드한다면 이 네 줄은 지워도 된다.
+CC_x86_64-pc-windows-msvc = "C:\\Program Files\\LLVM\\bin\\clang-cl.exe"
+CXX_x86_64-pc-windows-msvc = "C:\\Program Files\\LLVM\\bin\\clang-cl.exe"
+CFLAGS_x86_64-pc-windows-msvc = "--target=x86_64-pc-windows-msvc"
+CXXFLAGS_x86_64-pc-windows-msvc = "--target=x86_64-pc-windows-msvc"
+
 # Ninja 제너레이터를 강제해서 cmake 가 -G "Visual Studio" 대신 clang-cl 을 사용하도록
 CMAKE_GENERATOR = "Ninja"
 # ↓ 본인 머신의 ninja.exe 경로로 교체할 것 (`where ninja` 로 확인)

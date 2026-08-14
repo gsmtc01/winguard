@@ -33,7 +33,10 @@ if not exist "!VCVARS!" goto :novs
 echo [정보] vcvarsall = !VCVARS!
 
 set "PATH=C:\Program Files\LLVM\bin;%PATH%"
+REM 실행 중이면 복사 단계에서 파일이 잠긴다. release\ 로 복사한 이름까지 함께 종료한다.
 taskkill /F /IM winguard.exe >nul 2>&1
+taskkill /F /IM WinGuard-x64.exe >nul 2>&1
+taskkill /F /IM WinGuard-arm64.exe >nul 2>&1
 
 if /i "%ARCH%"=="arm64" goto :arm64
 
@@ -55,7 +58,10 @@ if /i "%ARCH%"=="x64" goto :done
 :arm64
 echo.
 echo ===== ARM64 빌드 =====
-cmd /c ""!VCVARS!" amd64_arm64 && pnpm tauri build --target aarch64-pc-windows-msvc"
+REM 호스트가 ARM64 이므로 네이티브 빌드. Hostarm64\arm64\cl.exe (ARM64 바이너리)를
+REM 쓰려면 amd64_arm64 가 아니라 arm64 를 지정해야 한다.
+REM amd64_arm64 는 Hostx64\arm64\cl.exe (x64 바이너리)라 에뮬레이션으로 돈다.
+cmd /c ""!VCVARS!" arm64 && pnpm tauri build --target aarch64-pc-windows-msvc"
 if errorlevel 1 (
   echo [실패] ARM64 빌드
   exit /b 1
