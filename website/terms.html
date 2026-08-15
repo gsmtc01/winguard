@@ -35,6 +35,8 @@
       })();
     </script>
 
+    <link rel="preload" as="style" href="./assets/fonts.css" />
+    <link rel="stylesheet" href="./assets/fonts.css" />
     <link rel="stylesheet" href="./assets/styles.css" />
 
     <script src="./assets/site.js" defer></script>
@@ -180,7 +182,7 @@
               <tr><td>점검</td><td>이용자 기기의 보안 설정 및 침해 징후를 확인하는 기능</td></tr>
               <tr><td>조치(Fix)</td><td>점검 결과에 따라 레지스트리 값 등 시스템 설정을 변경하는 기능</td></tr>
               <tr><td>격리(Quarantine)</td><td>조치 실행 전 원본 설정값을 로컬에 백업하는 기능</td></tr>
-              <tr><td>외부 서비스</td><td>VirusTotal, HuggingFace, GitHub, endoflife.date 등 제3자가 운영하는 서비스</td></tr>
+              <tr><td>외부 서비스</td><td>VirusTotal, HuggingFace, GitHub, endoflife.date, 브라우저 제조사의 버전 정보 엔드포인트 등 제3자가 운영하는 서비스</td></tr>
             </tbody>
           </table>
         </div>
@@ -228,6 +230,7 @@
           <li>본 소프트웨어는 조치 실행 전 변경 대상의 원본 값을 격리 폴더에 백업하며, <strong>백업에 실패하는 경우 조치를 중단</strong>합니다. 이용자는 앱 내 복원 기능을 통해 언제든 원래 값으로 되돌릴 수 있습니다.</li>
           <li>격리 백업 항목이 50개를 초과하면 오래된 항목부터 자동으로 정리될 수 있습니다. 장기 보존이 필요한 백업은 이용자가 별도로 보관하여야 합니다.</li>
           <li>조치로 인해 특정 응용 프로그램이나 네트워크 기능이 의도치 않게 동작하지 않을 수 있으므로, 이용자는 조치 전 시스템 복원 지점 생성 또는 중요 데이터 백업을 수행할 것을 권장합니다.</li>
+          <li>설정의 시작 프로그램 등록 기능은 조치와 별개로 <code>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run</code> 에 실행 파일 경로를 값으로 씁니다. 이용자가 해당 설정을 끄면 값이 제거됩니다. 이용자가 직접 켠 설정이므로 격리 백업의 대상이 아닙니다.</li>
         </ol>
 
         <h2>제9조 (외부 서비스 연동)</h2>

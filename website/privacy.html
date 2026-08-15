@@ -35,6 +35,8 @@
       })();
     </script>
 
+    <link rel="preload" as="style" href="./assets/fonts.css" />
+    <link rel="stylesheet" href="./assets/fonts.css" />
     <link rel="stylesheet" href="./assets/styles.css" />
 
     <script src="./assets/site.js" defer></script>
@@ -241,12 +243,15 @@
           역시 로컬에서만 처리됩니다.
         </p>
 
-        <h2>제4조 (로컬 저장 위치 및 보유 기간)</h2>
+        <h2>제4조 (저장 위치 및 보유 기간)</h2>
+
+        <h3>4.1 본 소프트웨어가 저장하는 데이터</h3>
         <div class="table-wrap">
           <table>
             <tbody>
               <tr><th>데이터</th><th>저장 위치</th><th>보유 기간</th></tr>
               <tr><td>검사 기록, 보안 점수 히스토리, 테마 설정</td><td><code>%LOCALAPPDATA%\com.winguard.security\</code></td><td>이용자가 삭제할 때까지</td></tr>
+              <tr><td>VirusTotal 검사 이력 (파일명, SHA-256, 탐지 결과, 검사 시각)</td><td><code>%LOCALAPPDATA%\com.winguard.security\</code></td><td>최근 20건까지 보관하며, 초과분은 오래된 항목부터 자동 삭제</td></tr>
               <tr><td>AI 모델 경로, 업데이트 설정</td><td><code>%LOCALAPPDATA%\WinGuard\</code></td><td>이용자가 삭제할 때까지</td></tr>
               <tr><td>조치 전 레지스트리 원본값 백업(격리)</td><td><code>%LOCALAPPDATA%\WinGuard\quarantine\</code></td><td>이용자가 삭제할 때까지. 단, 항목이 50개를 초과하면 오래된 항목부터 자동 정리</td></tr>
               <tr><td>AI 모델 파일 (약 2.89 GiB)</td><td><code>%LOCALAPPDATA%\WinGuard\models\</code> 또는 이용자가 지정한 경로</td><td>이용자가 삭제할 때까지</td></tr>
@@ -257,8 +262,28 @@
         <ol>
           <li>VirusTotal API 키는 평문 설정 파일이 아니라 운영체제가 제공하는 자격 증명 관리자에 저장되어, 운영체제 수준의 보호를 받습니다.</li>
           <li>이용자는 앱 설정 화면에서 검사 기록, 격리 백업, AI 모델 파일을 삭제할 수 있으며, 위 폴더를 직접 삭제하여 데이터 전체를 파기할 수 있습니다.</li>
+          <li>VirusTotal 검사 이력에는 검사한 파일의 이름이 그대로 기록되므로, 파일명 자체에 이용자를 식별할 수 있는 정보가 포함될 수 있습니다. 이 기록은 기기 밖으로 전송되지 않으며 설정 화면에서 삭제할 수 있습니다.</li>
           <li>본 소프트웨어는 포터블 실행 파일이므로, 위 폴더를 삭제하고 실행 파일을 제거하면 이용자 기기에 잔존 데이터가 남지 않습니다.</li>
         </ol>
+
+        <h3>4.2 웹사이트가 저장하는 데이터</h3>
+        <p>
+          본 방침이 게시된 웹사이트는 이용자를 식별하거나 추적하지 않습니다. 분석
+          도구, 광고 스크립트, 접속자 식별용 쿠키를 사용하지 않으며, 개발자가
+          운영하는 서버가 없으므로 접속 기록을 따로 보관하지 않습니다.
+        </p>
+        <p>
+          다만 화면 테마(라이트/다크) 선택을 기억하기 위해 브라우저의 로컬
+          스토리지에 <code>winguard-theme</code> 값 하나를 저장합니다. 이 값은
+          <code>light</code> 또는 <code>dark</code> 문자열뿐이며 개인을 식별하지
+          않고, 브라우저 밖으로 전송되지 않습니다. 브라우저의 사이트 데이터 삭제
+          기능으로 언제든 지울 수 있습니다.
+        </p>
+        <p>
+          웹사이트는 GitHub Pages 로 제공되므로, 접속 과정에서 GitHub 에 IP 주소와
+          User-Agent 등 통신에 수반되는 정보가 전달됩니다. 해당 정보의 처리는
+          GitHub 의 개인정보 처리방침에 따릅니다.
+        </p>
 
         <h2>제5조 (제3자 서비스로의 통신)</h2>
         <p>
@@ -400,10 +425,23 @@
           통하여 함께 안내합니다.
         </p>
 
-        <h2>제13조 (문의처)</h2>
+        <h2>제13조 (개인정보 보호책임자 및 문의처)</h2>
         <p>
-          개인정보 처리에 관한 문의, 의견, 신고는 공식 저장소의 이슈 트래커를
-          통하여 접수합니다.
+          개발자는 개인정보 처리에 관한 업무를 총괄하여 책임지며, 이용자의 문의와
+          불만 처리를 담당합니다. 본 소프트웨어는 개인 개발자가 단독으로 개발하고
+          배포하므로 별도의 조직이나 부서를 두지 않습니다.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th>구분</th><th>내용</th></tr>
+              <tr><td>개인정보 보호책임자</td><td>DONGHUN OH (개발자 본인)</td></tr>
+              <tr><td>연락 방법</td><td>공식 저장소의 이슈 트래커</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          개인정보 처리에 관한 문의, 의견, 신고는 아래를 통하여 접수합니다.
         </p>
         <ul>
           <li>저장소: <a href="https://github.com/gsmtc01/winguard">https://github.com/gsmtc01/winguard</a></li>

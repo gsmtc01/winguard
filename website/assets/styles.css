@@ -1,14 +1,6 @@
 /* WinGuard 웹사이트 공통 스타일.
    토큰 이름은 데스크톱 앱(src/index.css)과 동일하게 맞춘다. */
 
-@font-face {
-  font-family: "Pretendard";
-  src: url("./fonts/PretendardVariable.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* ── 디자인 토큰 ─────────────────────────────────────────── */
 
 :root {
@@ -61,8 +53,9 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui,
-    sans-serif;
+  /* 폰트 선언은 assets/fonts.css 에 있다 (유니코드 구간별 분할 로딩). */
+  font-family: "Pretendard Variable", "Pretendard", "Apple SD Gothic Neo",
+    "Malgun Gothic", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   transition: background 0.2s, color 0.2s;
 }

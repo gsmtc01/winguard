@@ -29,7 +29,8 @@ website/
     ├── notices.js              ← 공지사항 데이터 (목록·상세 공용 원본)
     ├── favicon.svg             ← 루트 app-icon.svg 사본
     ├── og.png                  ← 공유 카드 이미지 1200×630
-    ├── fonts/PretendardVariable.woff2   ← src/assets/fonts 사본 (CDN 의존 없음)
+    ├── fonts.css                ← Pretendard @font-face 92개 (아래 참고)
+    ├── fonts/                   ← Pretendard dynamic subset woff2 92개
     └── screenshots/            ← 앱 화면 캡처 4장
 ```
 
@@ -115,6 +116,12 @@ node website/scripts/sync-release.mjs
   코드에서 호출하는 호스트가 늘면 방침도 함께 고칠 것.
 - **격리 자동 정리 50개**: `src-tauri/src/commands/quarantine_commands.rs` 의
   `PRUNE_THRESHOLD` 기준이다. 방침 제4조, 약관 제8조, Q&A 에 나온다.
+- **VirusTotal 검사 이력 20건**: `src/lib/vtHistory.ts` 의 `MAX_ENTRIES` 기준이다.
+  파일명이 그대로 기록되므로 방침 제4.1조에 그 사실을 함께 적어두었다.
+- **시작 프로그램 등록**: `src-tauri/src/commands/device_commands.rs` 가
+  `HKCU\...\CurrentVersion\Run` 에 값을 쓴다. 약관 제8조 5항에 경로까지 적혀 있다.
+- **사이트가 저장하는 값**: `localStorage['winguard-theme']` 하나뿐이다. 다른 저장이
+  생기면 방침 제4.2조를 고칠 것.
 - **보안 점수 계산**: Q&A 의 "경고 −10, 위험 −20, 심각 −35" 는
   `src-tauri/src/engine/scorer.rs` 와 `src/lib/severity.ts` 기준이다.
 
@@ -199,6 +206,17 @@ grep -rn '—' website
   정책 URL 은 바뀌는 일이 잦아, 확인 없이 링크를 걸면 오히려 신뢰를 해친다.
 - 방침 제5조의 외부 통신 범위는 홈 프라이버시 밴드와 Q&A 답변에도 반영되어 있다.
   한쪽만 고치면 서로 어긋나므로 세 곳을 함께 볼 것.
+- 원문 대비 아래 네 가지가 사이트에서 추가되었다. 원문에도 반영해야 두 쪽이
+  어긋나지 않는다.
+
+  | 위치 | 내용 |
+  |---|---|
+  | 방침 제4.1조 | VirusTotal 검사 이력(파일명·SHA-256·결과·시각, 최근 20건) 행과 파일명 주의 |
+  | 방침 제4.2조 | 웹사이트가 저장하는 값(`winguard-theme`)과 GitHub Pages 호스팅 고지 |
+  | 방침 제13조 | 개인정보 보호책임자 지정 (개인정보 보호법 제31조) |
+  | 약관 제8조 5항 | 시작 프로그램 등록이 쓰는 레지스트리 경로 |
+
+  약관 제2조의 "외부 서비스" 정의에 브라우저 버전 엔드포인트도 덧붙였다.
 
 ## SEO · 공유 카드
 
@@ -217,7 +235,26 @@ grep -rn '—' website
 
 ## 남은 개선거리
 
-- **Pretendard 2MB**: 사이트 용량의 대부분이다. 한글 서브셋으로 줄이면 첫 방문이
-  크게 가벼워진다.
 - **헤더·푸터 중복**: 페이지를 더 늘릴 계획이면 제너레이터를 도입해 정리하는 편이
   낫다.
+
+## 폰트
+
+Pretendard 공식 **variable dynamic subset** 을 자체 호스팅한다. 유니코드 구간별로
+92개 조각으로 나뉘어 있고 각 `@font-face` 에 `unicode-range` 가 붙어 있어,
+브라우저는 그 페이지에 실제로 쓰인 글자가 든 조각만 내려받는다.
+
+| | 저장소 | 첫 방문 전송 |
+|---|---|---|
+| 이전 (단일 variable) | 2.00 MB | 2,009 KB |
+| 현재 (dynamic subset) | 2.82 MB | **282 KB** (홈 기준 11조각) |
+
+- 출처: `orioncactus/pretendard` 의 `dist/web/variable` (SIL Open Font License 1.1)
+- 공식 배포본을 그대로 쓰고 `url()` 경로만 바꿨다. **손으로 고치지 말고 원본에서
+  다시 받을 것.**
+- 92개를 전부 넣은 이유는 나중에 공지에 새 한글이 들어와도 Pretendard 로 렌더되게
+  하기 위해서다. 쓰이는 조각만 넣으면 저장소는 작아지지만 새 글자에서 시스템
+  폰트로 떨어진다.
+- 패밀리 이름은 공식 이름인 `Pretendard Variable` 을 그대로 쓴다(앱은 `Pretendard`).
+- `U+2212`(MINUS SIGN)는 Pretendard 서브셋 어느 구간에도 없다. 음수 표기에는
+  ASCII 하이픈을 쓸 것.

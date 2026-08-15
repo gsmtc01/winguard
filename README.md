@@ -5,7 +5,10 @@ AI를 활용한 Windows 전용 보안 상태 점검 앱입니다. 내 PC의 보�
 트레이에 상주하는 경량 데스크톱 앱이며, 설치 과정 없이 실행 파일 하나로 동작합니다.
 
 [![CI](https://github.com/gsmtc01/winguard/actions/workflows/ci.yml/badge.svg)](https://github.com/gsmtc01/winguard/actions/workflows/ci.yml)
+[![Pages](https://github.com/gsmtc01/winguard/actions/workflows/pages.yml/badge.svg)](https://github.com/gsmtc01/winguard/actions/workflows/pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+소개 웹사이트: **<https://gsmtc01.github.io/winguard/>** (소스는 [`website/`](website/), [개인정보 처리방침](https://gsmtc01.github.io/winguard/privacy.html) · [이용약관](https://gsmtc01.github.io/winguard/terms.html))
 
 ## 다운로드
 
