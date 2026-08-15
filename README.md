@@ -8,7 +8,9 @@ AI를 활용한 Windows 전용 보안 상태 점검 앱입니다. 내 PC의 보�
 [![Pages](https://github.com/gsmtc01/winguard/actions/workflows/pages.yml/badge.svg)](https://github.com/gsmtc01/winguard/actions/workflows/pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-소개 웹사이트: **<https://gsmtc01.github.io/winguard/>** (소스는 [`website/`](website/), [개인정보 처리방침](https://gsmtc01.github.io/winguard/privacy.html) · [이용약관](https://gsmtc01.github.io/winguard/terms.html))
+소개 웹사이트: **<https://gsmtc01.github.io/winguard/>** (소스는 [`website/`](website/))
+
+법적 고지: [개인정보 처리방침](docs/PRIVACY.md) · [이용약관](docs/TERMS.md). 웹에 게시된 문서는 이 두 마크다운에서 생성됩니다.
 
 ## 다운로드
 
@@ -60,8 +62,12 @@ AI 분석을 처음 사용할 때 약 3GB의 모델 파일을 내려받습니다
 | 데이터 | 위치 |
 |---|---|
 | 검사 기록, 점수 히스토리, 테마 | `%LOCALAPPDATA%\com.winguard.security\` |
+| VirusTotal 검사 이력 (최근 20건) | `%LOCALAPPDATA%\com.winguard.security\` |
 | 모델 경로, 업데이트 설정 | `%LOCALAPPDATA%\WinGuard\` |
+| 조치 전 레지스트리 백업(격리) | `%LOCALAPPDATA%\WinGuard\quarantine\` |
 | VirusTotal API 키 | Windows 자격 증명 관리자 |
+
+각 항목의 보유 기간과 삭제 방법은 [개인정보 처리방침 제4조](docs/PRIVACY.md)에 있습니다.
 
 ## 개발 환경
 
