@@ -81,9 +81,12 @@ jobs:
       - name: 단위 테스트
         run: pnpm vitest run
 
-      # 커버리지 하한선(래칫). 목표는 70% 지만 현재 9.1% 라 한 번에 못 올린다.
+      # 커버리지 하한선(래칫). 목표는 70% 지만 현재 10.5% 라 한 번에 못 올린다.
       # 회귀 방지용으로 현재 수준에 걸어두고, 테스트를 추가할 때마다 이 숫자를 올린다.
       # 전체 수치는 미테스트 대형 UI 파일(VtScanner.tsx 393줄, reportPdf.ts 229줄 등)이
       # 분모를 지배한다. 크게 올리려면 그쪽에 테스트가 필요하다.
+      #
+      # 측정 범위는 vite.config.ts 의 coverage.include 로 src/** 에 한정한다.
+      # website/ 의 정적 사이트 스크립트까지 세면 분모만 커져 수치가 왜곡된다.
       - name: 커버리지 확인
-        run: pnpm vitest run --coverage --coverage.thresholds.lines=9
+        run: pnpm vitest run --coverage --coverage.thresholds.lines=10
