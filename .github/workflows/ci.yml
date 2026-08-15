@@ -9,12 +9,14 @@ on:
     paths-ignore:
       - "website/**"
       - "docs/**"
+      - "README.md"
       - ".github/workflows/pages.yml"
   pull_request:
     branches: [main]
     paths-ignore:
       - "website/**"
       - "docs/**"
+      - "README.md"
       - ".github/workflows/pages.yml"
 
 jobs:
