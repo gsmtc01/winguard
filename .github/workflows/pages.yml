@@ -23,11 +23,6 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      sync_release:
-        description: "최신 릴리즈 값(버전·크기·SHA-256)을 먼저 주입"
-        type: boolean
-        default: false
 
 # 배포는 항상 마지막 것만 살아남으면 된다. 진행 중인 배포는 취소하지 않는다
 # (반쯤 올라간 사이트가 남는 것을 막기 위해서다).
@@ -59,11 +54,20 @@ jobs:
         with:
           node-version: "24"
 
+      # 아래 세 단계는 배포할 때마다 돌린다. 어느 경로로 배포하든 사이트가
+      # GitHub 릴리즈, docs/*.md 와 항상 같은 내용이 되도록 하기 위해서다.
+
+      # 버전·배포일·파일 크기·SHA-256 을 data-rel 표시 지점에 넣는다.
       - name: 릴리즈 값 주입
-        if: github.event_name == 'release' || inputs.sync_release
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node website/scripts/sync-release.mjs
+
+      # 변경 이력은 GitHub 릴리즈 본문이 원본이다.
+      - name: 변경 이력 빌드
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node website/scripts/build-updates.mjs
 
       # 개인정보 처리방침과 이용약관은 docs/*.md 가 원본이다. 손으로 고친
       # HTML 이 섞여 들어와도 여기서 원본 기준으로 다시 덮어쓴다.
@@ -81,7 +85,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add website
-          git commit -m "사이트: 릴리즈 값 동기화 (${{ github.event.release.tag_name || 'latest' }})"
+          git commit -m "사이트: 생성물 동기화 (${{ github.event.release.tag_name || 'latest' }})"
           git push origin HEAD:${{ github.event.repository.default_branch }}
 
       - name: Pages 설정 읽기

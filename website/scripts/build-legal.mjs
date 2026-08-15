@@ -17,6 +17,8 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { escapeHtml, inline } from "./md-inline.mjs";
+
 const WEBSITE = join(dirname(fileURLToPath(import.meta.url)), "..");
 const ROOT = join(WEBSITE, "..");
 const CHECK_ONLY = process.argv.includes("--check");
@@ -41,29 +43,6 @@ const DOCS = [
 ];
 
 const SITE = "https://gsmtc01.github.io/winguard/";
-
-// ── 인라인 변환 ──────────────────────────────────────────────
-
-const escapeHtml = (s) =>
-  s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
-
-/** `code`, **bold**, [text](url) 만 처리한다. */
-function inline(text) {
-  const codes = [];
-  // 코드부터 뽑아둬야 안쪽 ** 이 굵게 처리되지 않는다.
-  let s = text.replace(/`([^`]+)`/g, (m, c) => {
-    codes.push(c);
-    return `\u0000${codes.length - 1}\u0000`;
-  });
-
-  s = escapeHtml(s);
-  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, t, u) => `<a href="${u}">${t}</a>`);
-  s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-
-  if (s.includes("*")) throw new Error(`처리하지 못한 * 가 남았습니다: ${text.slice(0, 60)}`);
-
-  return s.replace(/\u0000(\d+)\u0000/g, (m, i) => `<code>${escapeHtml(codes[+i])}</code>`);
-}
 
 // ── 블록 변환 ────────────────────────────────────────────────
 

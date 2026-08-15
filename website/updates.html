@@ -171,6 +171,10 @@
       </section>
 
       <section class="page page--wide">
+        <!-- 아래 구획은 GitHub 릴리즈 본문에서 생성됩니다.
+             직접 고치지 말고 릴리즈 노트를 고친 뒤
+             node website/scripts/build-updates.mjs 를 실행하세요. -->
+        <!-- build-updates:start -->
         <div class="changelog">
           <div class="timeline">
             <article class="release" id="v0-1-0">
@@ -180,37 +184,24 @@
                   <span class="release__date num">2026.08.15</span>
                   <span class="badge badge--solid">최신 버전</span>
                 </div>
-
-                <p class="release__lede">
-                  Windows 보안 상태 점검 앱 WinGuard의 첫 공개 릴리즈입니다.
-                  설치 과정 없이 실행 파일 하나로 동작합니다.
-                </p>
-
+                <p class="release__lede">Windows 보안 상태 점검 앱 WinGuard의 첫 공개 릴리즈입니다.</p>
                 <div class="release__group">
                   <span class="tag">신규</span>
                   <ul>
                     <li>23개 상시 보안 점검: DNS 하이재킹, 랜섬웨어 흔적, 레지스트리 변조 탐지 포함</li>
                     <li>보안 점수를 원형 게이지로 요약</li>
                     <li>온디바이스 AI 분석: 기기 내부에서만 추론하며 분석 대상이 외부로 전송되지 않습니다</li>
-                    <li>프로세스 · 네트워크 · 이벤트로그 · 브라우저 확장 분석</li>
-                    <li>카메라 · 마이크 접근 제어</li>
+                    <li>프로세스 / 네트워크 / 이벤트로그 / 브라우저 확장 분석</li>
+                    <li>카메라·마이크 접근 제어</li>
                     <li>VirusTotal 연동 파일 검사</li>
                     <li>수정 전 자동 백업 및 복원(Quarantine)</li>
-                    <li>앱 내 업데이트: 다운로드 → 해시 검증 → 교체 → 재시작</li>
                   </ul>
                 </div>
-
                 <div class="release__note">
-                  <p>
-                    <strong>알아두실 점.</strong> 이 실행 파일에는 아직 코드 서명이
-                    적용되어 있지 않아, 처음 실행할 때 Windows SmartScreen 경고가
-                    나타날 수 있습니다. 또한 일부 점검과 수정 기능이 관리자 권한을
-                    사용하므로 실행 시 UAC 확인 창이 표시됩니다.
-                  </p>
+                  <p><strong>알아두실 점.</strong> 이 실행 파일은 코드 서명이 되어 있지 않습니다. 실행할 때 Windows SmartScreen이 "Windows의 PC 보호" 경고를 띄울 수 있습니다. 위 해시로 파일을 확인하신 뒤 <code>추가 정보</code> → <code>실행</code>을 눌러 진행하세요. 일부 점검과 수정 기능은 관리자 권한을 사용합니다.</p>
                 </div>
-
                 <p class="release__link">
-                  <a data-rel-href="tag" href="https://github.com/gsmtc01/winguard/releases/tag/v0.1.0">GitHub 릴리즈에서 원문 보기 →</a>
+                  <a href="https://github.com/gsmtc01/winguard/releases/tag/v0.1.0">GitHub 릴리즈에서 원문 보기 →</a>
                 </p>
               </div>
             </article>
@@ -218,13 +209,14 @@
 
           <nav class="version-nav" aria-label="버전 바로가기">
             <h2>버전 바로가기</h2>
-            <a href="#latest"><span data-rel="version">v0.1.0</span> (최신)</a>
+            <a href="#latest">v0.1.0 (최신)</a>
             <p class="version-nav__note">
               첫 공개 릴리즈라 이전 버전이 아직 없습니다. 전체 릴리즈 목록은
               <a href="https://github.com/gsmtc01/winguard/releases">GitHub</a> 에서 볼 수 있습니다.
             </p>
           </nav>
         </div>
+        <!-- build-updates:end -->
       </section>
     </main>
 
