@@ -1,0 +1,17 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#359073"/>
+      <stop offset="1" stop-color="#2a6e58"/>
+    </linearGradient>
+  </defs>
+  <!-- 라운드 타일 (Forest 액센트) -->
+  <rect x="0" y="0" width="1024" height="1024" rx="208" fill="url(#tile)"/>
+  <!-- WinGuard 실드 마크 (사이드바 로고와 동일한 스트로크 아이콘) -->
+  <g transform="translate(-16,6) scale(44)"
+     fill="none" stroke="#ffffff" stroke-width="1.1"
+     stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3l7 3v5c0 4.4-3 7.5-7 9-4-1.5-7-4.6-7-9V6l7-3z"/>
+    <path d="M9 12l2 2 4-4"/>
+  </g>
+</svg>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gsmtc01.github.io/winguard/sitemap.xml

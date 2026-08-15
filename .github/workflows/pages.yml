@@ -1,0 +1,102 @@
+# .github/workflows/pages.yml
+#
+# website/ 를 GitHub Pages 로 배포한다.
+#
+# 처음 한 번은 저장소 Settings > Pages 에서 Source 를 "GitHub Actions" 로
+# 바꿔 두어야 한다. 이 워크플로는 Pages 를 대신 켜지 않는다(공개 여부는
+# 저장소 소유자가 직접 결정할 일이다).
+#
+# 트리거
+#   push (website/**)   사이트를 고쳐 main 에 올리면 바로 반영
+#   release: published  릴리즈 값(버전·크기·SHA-256)을 주입한 뒤 배포
+#   workflow_dispatch   수동 실행. 릴리즈 값 주입 여부를 고를 수 있다
+
+name: Pages 배포
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "website/**"
+      - ".github/workflows/pages.yml"
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      sync_release:
+        description: "최신 릴리즈 값(버전·크기·SHA-256)을 먼저 주입"
+        type: boolean
+        default: false
+
+# 배포는 항상 마지막 것만 살아남으면 된다. 진행 중인 배포는 취소하지 않는다
+# (반쯤 올라간 사이트가 남는 것을 막기 위해서다).
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    name: 빌드
+    runs-on: ubuntu-latest
+    # 릴리즈 값을 주입한 경우 그 결과를 main 에 되돌려 커밋해야 하므로
+    # 이 잡에서만 쓰기 권한을 준다.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # 커밋을 되돌려 밀어야 하므로 토큰을 남겨 둔다.
+          persist-credentials: true
+
+      - name: Node.js 설치
+        if: github.event_name == 'release' || inputs.sync_release
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: 릴리즈 값 주입
+        if: github.event_name == 'release' || inputs.sync_release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node website/scripts/sync-release.mjs
+
+      # 주입 결과를 저장소에도 남긴다. 이렇게 해야 다음에 사람이 파일을 열었을 때
+      # 사이트에 실제로 떠 있는 값과 저장소 내용이 어긋나지 않는다.
+      - name: 변경분 커밋
+        if: github.event_name == 'release' || inputs.sync_release
+        run: |
+          if git diff --quiet -- website; then
+            echo "변경 없음. 커밋 생략."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add website
+          git commit -m "사이트: 릴리즈 값 동기화 (${{ github.event.release.tag_name || 'latest' }})"
+          git push origin HEAD:${{ github.event.repository.default_branch }}
+
+      - name: Pages 설정 읽기
+        uses: actions/configure-pages@v6
+        # enablement 는 켜지 않는다. Pages 활성화는 저장소 설정에서 직접 한다.
+
+      - name: 아티팩트 업로드
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: website
+
+  deploy:
+    name: 배포
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Pages 배포
+        id: deployment
+        uses: actions/deploy-pages@v5

@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WinGuard | 내 PC 보안, 한눈에 확인하고 바로 조치하세요</title>
+    <meta name="description" content="23개 상시 보안 점검과 온디바이스 AI 분석으로, 인터넷 전송 없이 내 PC의 보안 상태를 지켜주는 Windows 전용 보안 점검 앱. MIT 오픈소스." />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="WinGuard" />
+    <meta property="og:title" content="WinGuard | 내 PC 보안, 한눈에 확인하고 바로 조치하세요" />
+    <meta property="og:description" content="23개 상시 보안 점검과 온디바이스 AI 분석으로, 인터넷 전송 없이 내 PC의 보안 상태를 지켜주는 Windows 전용 보안 점검 앱. MIT 오픈소스." />
+    <meta property="og:url" content="https://gsmtc01.github.io/winguard/" />
+    <meta property="og:image" content="https://gsmtc01.github.io/winguard/assets/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://gsmtc01.github.io/winguard/" />
+
+    <!-- 첫 페인트 전에 테마를 확정해 깜빡임을 막는다. -->
+    <script>
+      (function () {
+        var theme = "light";
+        try {
+          var saved = localStorage.getItem("winguard-theme");
+          if (saved === "light" || saved === "dark") theme = saved;
+          else if (
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+          )
+            theme = "dark";
+        } catch (e) {}
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+
+    <link rel="stylesheet" href="./assets/styles.css" />
+
+    <script src="./assets/site.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__bar">
+        <a class="brand" href="./index.html">
+          <svg width="32" height="32" viewBox="0 0 24 24" aria-hidden="true">
+            <defs>
+              <linearGradient id="hdr-tile" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#359073" />
+                <stop offset="1" stop-color="#2a6e58" />
+              </linearGradient>
+            </defs>
+            <rect width="24" height="24" rx="6" fill="url(#hdr-tile)" />
+            <g
+              transform="translate(4.5,4) scale(0.65)"
+              fill="none"
+              stroke="#ffffff"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 3l7 3v5c0 4.4-3 7.5-7 9-4-1.5-7-4.6-7-9V6l7-3z" />
+              <path d="M9 12l2 2 4-4" />
+            </g>
+          </svg>
+          <span class="brand__name">WinGuard</span>
+        </a>
+
+        <nav class="site-nav" aria-label="주요 메뉴">
+          <a href="./index.html" aria-current="page">소개</a>
+          <a href="./notices.html">공지사항</a>
+          <a href="./updates.html">업데이트 소식</a>
+          <a href="./qna.html">Q&amp;A</a>
+        </nav>
+
+        <div class="header-actions">
+          <button
+            type="button"
+            class="icon-btn theme-toggle"
+            data-theme-toggle
+            aria-label="테마 전환"
+            aria-pressed="false"
+          >
+            <svg
+              class="icon-sun"
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path
+                d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+              />
+            </svg>
+            <svg
+              class="icon-moon"
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+            </svg>
+          </button>
+
+          <a class="header-cta" href="./download.html">다운로드</a>
+
+          <button
+            type="button"
+            class="icon-btn menu-toggle"
+            data-menu-toggle
+            aria-label="메뉴"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <nav
+        class="mobile-menu"
+        id="mobile-menu"
+        data-mobile-menu
+        data-open="false"
+        aria-label="모바일 메뉴"
+      >
+        <a href="./index.html" aria-current="page">소개</a>
+        <a href="./notices.html">공지사항</a>
+        <a href="./updates.html">업데이트 소식</a>
+        <a href="./qna.html">Q&amp;A</a>
+        <a class="btn btn-primary" href="./download.html">다운로드</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ── 히어로 ────────────────────────────────────────── -->
+      <section class="hero">
+        <div class="hero__blob" aria-hidden="true"></div>
+        <div class="hero__grid">
+          <div class="hero__copy">
+            <span class="eyebrow">Windows 전용 보안 점검 앱</span>
+            <h1>내 PC 보안, 한눈에 확인하고<br />바로 조치하세요</h1>
+            <p class="hero__lede">
+              23개 상시 보안 점검과 온디바이스 AI 분석으로, 인터넷 전송 없이 내
+              PC의 보안 상태를 지켜드립니다.
+            </p>
+            <div class="hero__actions">
+              <a class="btn btn-primary" href="./download.html">무료 다운로드</a>
+              <a class="btn btn-ghost" href="#features">기능 살펴보기</a>
+            </div>
+            <p class="hero__note num">
+              최신 버전 <span data-rel="version">v0.1.0</span> ·
+              <span data-rel="date">2026.08.15</span> · MIT 오픈소스
+            </p>
+          </div>
+
+          <div class="hero__shot">
+            <div class="shot">
+              대시보드 스크린샷: 보안 점수 게이지 + 점검 항목 리스트
+              <img
+                class="shot__light"
+                src="./assets/screenshots/hero-light.png"
+                alt="WinGuard 대시보드: 원형 보안 점수 게이지와 영역별 점검 결과"
+              />
+              <img
+                class="shot__dark"
+                src="./assets/screenshots/hero-dark.png"
+                alt=""
+                aria-hidden="true"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 신뢰 배지 ─────────────────────────────────────── -->
+      <section class="trust" aria-label="주요 특징 요약">
+        <ul class="trust__list">
+          <li class="trust__item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 11l4 4 4-4" /><path d="M4 19h16" /></svg>
+            <span>설치 없이 실행 파일 하나</span>
+          </li>
+          <li class="trust__item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+            <span>온디바이스 AI, 외부 전송 없음</span>
+          </li>
+          <li class="trust__item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="8" height="8" /><rect x="13" y="3" width="8" height="8" /><rect x="3" y="13" width="8" height="8" /><rect x="13" y="13" width="8" height="8" /></svg>
+            <span>Windows 11 · x64 / ARM64</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ── 핵심 기능 ─────────────────────────────────────── -->
+      <section class="features" id="features" aria-labelledby="features-title">
+        <div class="section-head">
+          <h2 id="features-title">핵심 기능</h2>
+          <p>WinGuard가 내 PC를 지키는 방법</p>
+        </div>
+
+        <div class="features__grid">
+          <article class="feature">
+            <div class="feature__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.4-3 7.5-7 9-4-1.5-7-4.6-7-9V6l7-3z" /></svg>
+            </div>
+            <h3>23종 상시 보안 점검</h3>
+            <p>Defender · 방화벽 · BitLocker · UAC · Secure Boot · TPM 같은 기본 설정과, DNS 하이재킹 · 랜섬웨어 흔적 · 레지스트리 변조 같은 침해 징후를 함께 점검합니다.</p>
+          </article>
+          <article class="feature">
+            <div class="feature__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15a8 8 0 1 1 16 0" /><path d="M12 15l4-5" /><circle cx="12" cy="15" r="1" /></svg>
+            </div>
+            <h3>한눈에 보는 보안 점수</h3>
+            <p>점검 결과를 가중치로 환산해 원형 게이지로 보여줍니다. 항목마다 무엇이 문제인지와 조치 방법이 함께 붙습니다.</p>
+          </article>
+          <article class="feature">
+            <div class="feature__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="3" /><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" /></svg>
+            </div>
+            <h3>온디바이스 AI 분석</h3>
+            <p>Google Gemma 4 E2B 로컬 LLM 이 점검 결과를 해석합니다. 추론이 전부 기기 안에서 이뤄져 분석 대상 데이터가 외부로 나가지 않습니다.</p>
+          </article>
+          <article class="feature">
+            <div class="feature__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7l8-4 8 4-8 4-8-4z" /><path d="M4 12l8 4 8-4" /><path d="M4 17l8 4 8-4" /></svg>
+            </div>
+            <h3>프로세스·네트워크 심층 분석</h3>
+            <p>실행 중인 프로세스, 활성 네트워크 연결, 보안 이벤트 로그, 설치된 브라우저 확장 프로그램을 각각 살펴볼 수 있습니다.</p>
+          </article>
+          <article class="feature">
+            <div class="feature__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z" /><circle cx="12" cy="13" r="3.2" /></svg>
+            </div>
+            <h3>카메라·마이크 접근 제어</h3>
+            <p>앱별로 카메라와 마이크 접근 권한을 확인하고, 원치 않는 프로그램의 접근을 차단할 수 있습니다.</p>
+          </article>
+          <article class="feature">
+            <div class="feature__icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" /><path d="M9.5 13l1.8 1.8L15 11" /></svg>
+            </div>
+            <h3>VirusTotal 검사 · 자동 백업</h3>
+            <p>의심스러운 파일의 해시를 조회하거나 직접 업로드해 검사합니다. 레지스트리를 바꾸는 조치는 원래 값을 먼저 백업하고, 실패하면 조치를 중단합니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ── 프라이버시 밴드 ───────────────────────────────── -->
+      <section class="privacy" aria-labelledby="privacy-title">
+        <div class="privacy__inner">
+          <h2 id="privacy-title">
+            <em>인터넷으로 전송되는 개인정보는 없습니다.</em><br />
+            모든 AI 분석은 오직 내 PC 안에서만 이루어집니다.
+          </h2>
+          <p>
+            Google Gemma 4 E2B 온디바이스 AI 가 로그와 이벤트를 기기 내부에서
+            직접 추론합니다. 외부와의 통신은 VirusTotal 파일 검사, AI 모델
+            내려받기, 업데이트 확인, 지원 종료일 조회 네 가지에 한정되며,
+            범위와 전송 항목은 <a href="./privacy.html">개인정보 처리방침</a>에
+            모두 공개해두었습니다.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── 라이트·다크 쇼케이스 ──────────────────────────── -->
+      <section class="showcase" aria-labelledby="showcase-title">
+        <div class="section-head">
+          <h2 id="showcase-title">라이트 · 다크 모드 지원</h2>
+          <p>어떤 환경에서도 눈에 편안한 대시보드</p>
+        </div>
+
+        <div class="showcase__grid">
+          <figure class="showcase__item">
+            <div class="showcase__frame">
+              <div class="shot">
+                라이트 모드 대시보드 스크린샷
+                <img src="./assets/screenshots/dashboard-light.png" alt="라이트 모드 WinGuard 대시보드" />
+              </div>
+            </div>
+            <figcaption class="showcase__caption">라이트 모드</figcaption>
+          </figure>
+
+          <figure class="showcase__item">
+            <div class="showcase__frame">
+              <div class="shot">
+                다크 모드 대시보드 스크린샷
+                <img src="./assets/screenshots/dashboard-dark.png" alt="다크 모드 WinGuard 대시보드" />
+              </div>
+            </div>
+            <figcaption class="showcase__caption">다크 모드</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ── 하단 CTA ──────────────────────────────────────── -->
+      <section class="cta" aria-labelledby="cta-title">
+        <div class="cta__inner">
+          <h2 id="cta-title">지금 무료로 다운로드하세요</h2>
+          <p class="num">
+            <span data-rel="version">v0.1.0</span> · Windows 11 x64 / ARM64 ·
+            <span data-rel="size-x64">약 11.6 MB</span>
+          </p>
+          <a class="btn btn-invert" href="./download.html">무료 다운로드</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__top">
+        <div class="site-footer__brand">
+          <div class="brand">
+            <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+            <defs>
+              <linearGradient id="ftr-tile" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#359073" />
+                <stop offset="1" stop-color="#2a6e58" />
+              </linearGradient>
+            </defs>
+            <rect width="24" height="24" rx="6" fill="url(#ftr-tile)" />
+            <g
+              transform="translate(4.5,4) scale(0.65)"
+              fill="none"
+              stroke="#ffffff"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 3l7 3v5c0 4.4-3 7.5-7 9-4-1.5-7-4.6-7-9V6l7-3z" />
+              <path d="M9 12l2 2 4-4" />
+            </g>
+          </svg>
+            <span class="brand__name">WinGuard</span>
+          </div>
+          <p>
+            내 PC의 보안 상태를 한눈에, 위협은 바로 조치하는 Windows 전용 보안
+            점검 앱. MIT 라이선스 오픈소스입니다.
+          </p>
+        </div>
+
+        <div class="site-footer__links">
+          <nav class="site-footer__group" aria-labelledby="ft-product">
+            <h2 id="ft-product">제품</h2>
+            <a href="./index.html">소개</a>
+            <a href="./download.html">다운로드</a>
+            <a href="./updates.html">업데이트 소식</a>
+          </nav>
+          <nav class="site-footer__group" aria-labelledby="ft-support">
+            <h2 id="ft-support">지원</h2>
+            <a href="./qna.html">Q&amp;A</a>
+            <a href="https://github.com/gsmtc01/winguard/issues">문의 · 버그 신고</a>
+            <a href="https://github.com/gsmtc01/winguard">GitHub 저장소</a>
+          </nav>
+          <nav class="site-footer__group" aria-labelledby="ft-policy">
+            <h2 id="ft-policy">정책</h2>
+            <a href="./privacy.html">개인정보처리방침</a>
+            <a href="./terms.html">이용약관</a>
+            <a href="https://github.com/gsmtc01/winguard/blob/main/LICENSE">MIT License</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="site-footer__bottom">
+        <span>© 2026 WinGuard. MIT License.</span>
+        <a href="https://github.com/gsmtc01/winguard">github.com/gsmtc01/winguard</a>
+      </div>
+    </footer>
+  </body>
+</html>
