@@ -1,0 +1,8 @@
+shots/
+before/
+before.json
+before.txt
+compare.html
+*.txt
+verify.cjs
+verification.json

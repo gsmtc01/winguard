@@ -1,0 +1,57 @@
+/* Hallmark · shape: Index and Long Document · genre: modern-minimal · theme: brand · redesign: full · job: download and find answers
+ * paper: neutral grey · accent: Forest green · display: Pretendard Variable 800 · body: Pretendard Variable · hero: Banner · nav: slab · footer: mast · signature: readable product documentation · posture: restrained · modes: light+dark · v2.0.0 */
+/* Hallmark · pre-emit critique: compact titles lead directly to downloads, answers and policy text; supporting pages share the home page's brand without repeating its full-screen product hero */
+/* Hallmark · waive 59 · utility pages part their lists with visible rules · Compact spacing keeps filters, download options and their explanations together instead of stretching reference content into marketing panels */
+/* Hallmark · waive 77 · these routes are download, support, error and policy documents · A short release index, archive link or recovery action retains its natural reading width and true item count without invented material */
+/* Hallmark · waive 78 · legal clauses and release versions are document subsections · Smaller headings preserve readable hierarchy within the long policy documents and scannable reference lists */
+/* Hallmark · answered F19 · legal strong emphasis uses the browser's bold weight to preserve source Markdown emphasis; ordinary copy, controls and headings use 400, 600 and 800 */
+/* Hallmark · answered F1 · quoted SmartScreen interface text is carried verbatim from the public release notes */
+
+@import "./styles.css";
+
+.page-head {
+  padding-bottom: var(--space-2xl);
+}
+
+.article__head {
+  margin-bottom: var(--space-xl);
+}
+
+.article__head h1 {
+  margin-bottom: 0;
+}
+
+.quick-row {
+  gap: var(--space-xs);
+}
+
+.quick {
+  white-space: nowrap;
+}
+
+.contact-card h2 {
+  font-size: var(--text-section);
+}
+
+.prose > h2:first-child {
+  margin-top: 0;
+}
+
+.page-head + .prose {
+  padding-top: var(--space-xl);
+}
+
+@media (max-width: 40rem) {
+  .dl-card,
+  .trust-box {
+    padding: var(--space-lg);
+  }
+
+  .code {
+    padding: var(--space-md);
+  }
+
+  .release-banner {
+    padding: var(--space-lg);
+  }
+}

@@ -1,10 +1,11 @@
-// WinGuard 웹사이트 공통 스크립트. 테마 토글, 모바일 메뉴, 목록 필터, 공지 상세.
+// WinGuard 웹사이트 공통 스크립트. 테마 토글, 모바일 메뉴, 화면 전환 탭, 목록 필터, 공지 상세.
 // 테마 초기값은 <head> 인라인 스크립트가 이미 적용해 둔다(FOUC 방지).
 (function () {
   "use strict";
 
   var STORAGE_KEY = "winguard-theme";
   var root = document.documentElement;
+  root.classList.add("js");
 
   // ── 테마 토글 ───────────────────────────────────────────
   var toggle = document.querySelector("[data-theme-toggle]");
@@ -28,10 +29,21 @@
   var menuBtn = document.querySelector("[data-menu-toggle]");
   var menu = document.querySelector("[data-mobile-menu]");
   if (menuBtn && menu) {
-    menuBtn.addEventListener("click", function () {
-      var open = menu.dataset.open !== "true";
+    var setMenuOpen = function (open) {
       menu.dataset.open = String(open);
       menuBtn.setAttribute("aria-expanded", String(open));
+    };
+    menuBtn.addEventListener("click", function () {
+      setMenuOpen(menu.dataset.open !== "true");
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && menu.dataset.open === "true") {
+        setMenuOpen(false);
+        menuBtn.focus();
+      }
+    });
+    menu.addEventListener("click", function (event) {
+      if (event.target.closest("a")) setMenuOpen(false);
     });
   }
 
@@ -45,6 +57,46 @@
       });
       if (img.complete && img.naturalWidth === 0) img.hidden = true;
     })(shots[i]);
+  }
+
+  // ── 화면 전환 탭 (index.html 라이트·다크 쇼케이스) ─────────
+  // 스크립트가 없으면 패널이 모두 보이고 탭은 숨는다(styles.css).
+  var switches = document.querySelectorAll("[data-switch]");
+  for (var w = 0; w < switches.length; w++) {
+    (function (box) {
+      var tabs = box.querySelectorAll('[role="tab"]');
+      var select = function (tab, focus) {
+        for (var t = 0; t < tabs.length; t++) {
+          var on = tabs[t] === tab;
+          tabs[t].setAttribute("aria-selected", String(on));
+          tabs[t].tabIndex = on ? 0 : -1;
+          var panel = document.getElementById(tabs[t].getAttribute("aria-controls"));
+          if (panel) panel.hidden = !on;
+        }
+        if (focus) tab.focus();
+      };
+      for (var t = 0; t < tabs.length; t++) {
+        (function (tab, idx) {
+          tab.addEventListener("click", function () {
+            select(tab, false);
+          });
+          tab.addEventListener("keydown", function (e) {
+            var next = null;
+            if (e.key === "ArrowRight") next = tabs[(idx + 1) % tabs.length];
+            else if (e.key === "ArrowLeft") next = tabs[(idx - 1 + tabs.length) % tabs.length];
+            else if (e.key === "Home") next = tabs[0];
+            else if (e.key === "End") next = tabs[tabs.length - 1];
+            if (next) {
+              e.preventDefault();
+              select(next, true);
+            }
+          });
+        })(tabs[t], t);
+      }
+      var initial = box.querySelector('[role="tab"][aria-selected="true"]') || tabs[0];
+      if (initial) select(initial, false);
+      box.classList.add("is-ready");
+    })(switches[w]);
   }
 
   // ── 공통 헬퍼 ───────────────────────────────────────────
@@ -137,15 +189,15 @@
 
     if (!current) {
       article.innerHTML =
-        '<h1>공지사항을 찾을 수 없습니다</h1>' +
-        '<p class="empty">주소가 잘못되었거나 삭제된 글입니다.</p>';
+        '<header class="article__head"><h1>공지사항을 찾을 수 없습니다</h1></header>' +
+        '<section class="article__body" aria-label="공지 안내"><p>주소가 잘못되었거나 삭제된 글입니다.</p></section>';
       // 이전/다음 링크만 감추고 "목록으로" 버튼은 남긴다.
       var adjacent = document.querySelector("[data-adjacent] .adjacent");
       if (adjacent) adjacent.hidden = true;
     } else {
       document.title = current.title + " | WinGuard 공지사항";
       article.innerHTML =
-        '<p class="article__meta">' +
+        '<header class="article__head"><p class="article__meta">' +
         '<span class="badge" data-cat="' +
         esc(current.category) +
         '">' +
@@ -157,14 +209,14 @@
         "</p>" +
         "<h1>" +
         esc(current.title) +
-        "</h1>" +
-        '<div class="article__body">' +
+        "</h1></header>" +
+        '<section class="article__body" aria-label="공지 본문">' +
         current.body
           .map(function (p) {
             return "<p>" + esc(p) + "</p>";
           })
           .join("") +
-        "</div>";
+        "</section>";
 
       // 이전/다음은 목록에 보이는 순서(notices.js 배열 순서)를 그대로 따른다.
       var fill = function (sel, item) {
@@ -173,6 +225,7 @@
         var title = row.querySelector(".adjacent__title");
         if (item) {
           row.href = "notice.html?id=" + item.id;
+          row.removeAttribute("aria-disabled");
           title.textContent = item.title;
         } else {
           row.removeAttribute("href");
@@ -231,7 +284,10 @@
           if (searchInput) searchInput.value = "";
           applyFaqFilter();
           target.open = true;
-          target.scrollIntoView({ block: "center", behavior: "smooth" });
+          var summary = target.querySelector("summary");
+          if (summary) summary.focus({ preventScroll: true });
+          var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          target.scrollIntoView({ block: "center", behavior: reduceMotion ? "instant" : "smooth" });
         });
       })(quickBtns[qi]);
     }

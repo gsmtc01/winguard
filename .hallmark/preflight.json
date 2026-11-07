@@ -1,0 +1,34 @@
+{
+  "scope": "website",
+  "mode": "continuation",
+  "pages": [
+    "index.html",
+    "qna.html",
+    "terms.html",
+    "404.html",
+    "notices.html",
+    "notice.html",
+    "updates.html",
+    "download.html",
+    "privacy.html"
+  ],
+  "preserved": {
+    "logo": "website/assets/favicon.svg",
+    "font": "Pretendard Variable",
+    "brand": "Forest green from original app and logo",
+    "facts": "Existing page copy and GitHub releases",
+    "legal": "Other legal wording retained; user-authorized agency and telephone update in section 13, with revision date and note"
+  },
+  "introduced": [
+    "website/assets/tokens.css",
+    "website/assets/base.css",
+    "website/assets/pages.css",
+    "website/DESIGN.md"
+  ],
+  "constraints": [
+    "AGENTS.md section 17",
+    "website/README.md",
+    "Generated legal pages rebuilt from source",
+    "No desktop app code changes"
+  ]
+}

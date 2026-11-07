@@ -37,34 +37,16 @@
 
     <link rel="preload" as="style" href="./assets/fonts.css" />
     <link rel="stylesheet" href="./assets/fonts.css" />
-    <link rel="stylesheet" href="./assets/styles.css" />
+    <link rel="stylesheet" href="./assets/pages.css" />
 
     <script src="./assets/site.js" defer></script>
   </head>
   <body>
     <header class="site-header">
-      <div class="site-header__bar">
-        <a class="brand" href="./index.html">
-          <svg width="32" height="32" viewBox="0 0 24 24" aria-hidden="true">
-            <defs>
-              <linearGradient id="hdr-tile" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#359073" />
-                <stop offset="1" stop-color="#2a6e58" />
-              </linearGradient>
-            </defs>
-            <rect width="24" height="24" rx="6" fill="url(#hdr-tile)" />
-            <g
-              transform="translate(4.5,4) scale(0.65)"
-              fill="none"
-              stroke="#ffffff"
-              stroke-width="1.6"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M12 3l7 3v5c0 4.4-3 7.5-7 9-4-1.5-7-4.6-7-9V6l7-3z" />
-              <path d="M9 12l2 2 4-4" />
-            </g>
-          </svg>
+      <a class="skip" href="#main">본문 바로가기</a>
+      <div class="container site-header__bar">
+        <a class="brand" href="./index.html" aria-label="WinGuard 홈">
+          <img src="./assets/favicon.svg" width="32" height="32" alt="" />
           <span class="brand__name">WinGuard</span>
         </a>
 
@@ -83,34 +65,11 @@
             aria-label="테마 전환"
             aria-pressed="false"
           >
-            <svg
-              class="icon-sun"
-              width="17"
-              height="17"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
+            <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="12" cy="12" r="4" />
-              <path
-                d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
-              />
+              <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
             </svg>
-            <svg
-              class="icon-moon"
-              width="17"
-              height="17"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
+            <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
             </svg>
           </button>
@@ -125,16 +84,7 @@
             aria-expanded="false"
             aria-controls="mobile-menu"
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 7h16M4 12h16M4 17h16" />
             </svg>
           </button>
@@ -156,39 +106,44 @@
       </nav>
     </header>
 
-    <main>
-      <section class="page page--narrow faq-hero">
-        <h1>무엇을 도와드릴까요?</h1>
-        <div class="search">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="color: var(--text-2)" aria-hidden="true">
+    <main id="main">
+      <section class="page page--narrow faq-hero" aria-labelledby="faq-title">
+        <h1 id="faq-title">무엇을 도와드릴까요?</h1>
+        <div class="search" role="search" aria-label="자주 묻는 질문 검색">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="11" cy="11" r="7" />
             <path d="M21 21l-4-4" />
           </svg>
           <label class="visually-hidden" for="faq-search">질문 검색</label>
-          <input id="faq-search" type="search" placeholder="질문을 검색해보세요" data-faq-search />
+          <input id="faq-search" type="search" placeholder="질문을 검색해보세요" aria-controls="faq-results" aria-describedby="faq-search-help" data-faq-search />
         </div>
-        <div class="quick-row">
-          <button type="button" class="quick" data-faq-open="f1">WinGuard는 어떤 Windows 버전에서 사용할 수 있나요?</button>
-          <button type="button" class="quick" data-faq-open="f3">실행할 때 관리자 권한이 필요한가요?</button>
-          <button type="button" class="quick" data-faq-open="f4">실행하려니 SmartScreen 경고가 떠요.</button>
-          <button type="button" class="quick" data-faq-open="f11">제 파일이나 로그가 외부 서버로 전송되나요?</button>
-          <button type="button" class="quick" data-faq-open="f16">문제를 수정했는데 시스템에 이상이 생겼어요. 되돌릴 수 있나요?</button>
+        <p id="faq-search-help" class="visually-hidden">질문과 답변에서 검색어를 찾습니다. 분류를 선택하면 해당 분류 안에서 검색합니다.</p>
+        <div class="quick-row" role="group" aria-label="자주 찾는 질문">
+          <button type="button" class="quick" data-faq-open="f1" aria-controls="f1">지원 Windows</button>
+          <button type="button" class="quick" data-faq-open="f3" aria-controls="f3">관리자 권한</button>
+          <button type="button" class="quick" data-faq-open="f4" aria-controls="f4">SmartScreen 경고</button>
+          <button type="button" class="quick" data-faq-open="f11" aria-controls="f11">외부 전송 범위</button>
+          <button type="button" class="quick" data-faq-open="f16" aria-controls="f16">변경 내용 복원</button>
         </div>
+        <noscript>
+          <p class="lead">검색과 분류 필터는 JavaScript가 필요합니다. 아래의 모든 질문은 제목을 눌러 답변을 확인할 수 있습니다.</p>
+        </noscript>
       </section>
 
-      <section class="page page--faq">
+      <section class="page page--faq" aria-labelledby="faq-list-title">
+        <h2 class="visually-hidden" id="faq-list-title">질문과 답변</h2>
         <div class="faq-layout">
           <div class="faq-side" role="group" aria-label="분류 필터">
-            <button type="button" data-faq-cat="전체" aria-pressed="true">전체</button>
-            <button type="button" data-faq-cat="설치·시작하기" aria-pressed="false">설치·시작하기</button>
-            <button type="button" data-faq-cat="보안 점검 기능" aria-pressed="false">보안 점검 기능</button>
-            <button type="button" data-faq-cat="AI 분석" aria-pressed="false">AI 분석</button>
-            <button type="button" data-faq-cat="개인정보·보안" aria-pressed="false">개인정보·보안</button>
-            <button type="button" data-faq-cat="요금 및 라이선스" aria-pressed="false">요금 및 라이선스</button>
-            <button type="button" data-faq-cat="문제 해결" aria-pressed="false">문제 해결</button>
+            <button type="button" data-faq-cat="전체" aria-pressed="true" aria-controls="faq-results">전체</button>
+            <button type="button" data-faq-cat="설치·시작하기" aria-pressed="false" aria-controls="faq-results">설치와 시작하기</button>
+            <button type="button" data-faq-cat="보안 점검 기능" aria-pressed="false" aria-controls="faq-results">보안 점검 기능</button>
+            <button type="button" data-faq-cat="AI 분석" aria-pressed="false" aria-controls="faq-results">AI 분석</button>
+            <button type="button" data-faq-cat="개인정보·보안" aria-pressed="false" aria-controls="faq-results">개인정보와 보안</button>
+            <button type="button" data-faq-cat="요금 및 라이선스" aria-pressed="false" aria-controls="faq-results">요금 및 라이선스</button>
+            <button type="button" data-faq-cat="문제 해결" aria-pressed="false" aria-controls="faq-results">문제 해결</button>
           </div>
 
-          <div class="faq-list" data-faq-list>
+          <div class="faq-list" id="faq-results" role="region" aria-labelledby="faq-list-title" data-faq-list>
             <details class="faq" id="f1" data-cat="설치·시작하기">
               <summary>WinGuard는 어떤 Windows 버전에서 사용할 수 있나요?</summary>
               <p>Windows 11(x64, ARM64)을 지원합니다. 최소 800×600, 권장 1100×720 해상도에서 사용하실 수 있습니다.</p>
@@ -207,7 +162,7 @@
             </details>
             <details class="faq" id="f5" data-cat="보안 점검 기능">
               <summary>23개 보안 점검 항목에는 어떤 것들이 포함되나요?</summary>
-              <p>Windows Defender, 방화벽, BitLocker, UAC, Secure Boot, TPM 같은 기본 보안 설정과 함께, DNS 하이재킹 · 랜섬웨어 흔적 · hosts 파일 변조 · SMBv1 활성화 · 레지스트리 변조(PUM) 같은 침해 징후를 점검합니다.</p>
+              <p>Windows Defender, 방화벽, BitLocker, UAC, Secure Boot, TPM 같은 기본 보안 설정과 함께, DNS 하이재킹, 랜섬웨어 흔적, hosts 파일 변조, SMBv1 활성화, 레지스트리 변조(PUM) 같은 침해 징후를 점검합니다.</p>
             </details>
             <details class="faq" id="f6" data-cat="보안 점검 기능">
               <summary>보안 점수는 어떻게 계산되나요?</summary>
@@ -239,7 +194,7 @@
             </details>
             <details class="faq" id="f12" data-cat="개인정보·보안">
               <summary>앱이 만드는 데이터는 어디에 저장되나요?</summary>
-              <p>검사 기록 · 점수 히스토리 · 테마는 %LOCALAPPDATA%\com.winguard.security\ 에, 모델 경로와 업데이트 설정은 %LOCALAPPDATA%\WinGuard\ 에 저장됩니다. VirusTotal API 키는 Windows 자격 증명 관리자에 보관됩니다.</p>
+              <p>검사 기록, 점수 히스토리, 테마는 %LOCALAPPDATA%\com.winguard.security\ 에, 모델 경로와 업데이트 설정은 %LOCALAPPDATA%\WinGuard\ 에 저장됩니다. VirusTotal API 키는 Windows 자격 증명 관리자에 보관됩니다.</p>
             </details>
             <details class="faq" id="f13" data-cat="개인정보·보안">
               <summary>카메라·마이크 접근은 어떻게 제어하나요?</summary>
@@ -269,14 +224,14 @@
               <summary>새 버전으로 어떻게 올리나요?</summary>
               <p>앱이 새 버전을 확인해 알려주며, 내려받은 파일의 해시를 검증한 뒤 교체하고 재시작합니다. 직접 받고 싶다면 다운로드 페이지에서 최신 파일을 받아 기존 실행 파일을 덮어써도 됩니다.</p>
             </details>
-            <p class="empty" data-faq-empty hidden>검색 결과가 없습니다. 다른 검색어를 입력해보세요.</p>
+            <p class="empty" role="status" aria-live="polite" aria-atomic="true" data-faq-empty hidden>검색 결과가 없습니다. 다른 검색어를 입력해보세요.</p>
           </div>
         </div>
       </section>
 
-      <section class="page page--narrow">
+      <section class="page page--narrow" aria-labelledby="contact-title">
         <div class="contact-card">
-          <h2>원하는 답을 못 찾으셨나요?</h2>
+          <h2 id="contact-title">원하는 답을 못 찾으셨나요?</h2>
           <p>GitHub 이슈로 질문이나 버그를 남겨주세요.</p>
           <a class="btn btn-primary" href="https://github.com/gsmtc01/winguard/issues">GitHub 이슈 열기</a>
         </div>
@@ -284,62 +239,45 @@
     </main>
 
     <footer class="site-footer">
-      <div class="site-footer__top">
-        <div class="site-footer__brand">
-          <div class="brand">
-            <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
-            <defs>
-              <linearGradient id="ftr-tile" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#359073" />
-                <stop offset="1" stop-color="#2a6e58" />
-              </linearGradient>
-            </defs>
-            <rect width="24" height="24" rx="6" fill="url(#ftr-tile)" />
-            <g
-              transform="translate(4.5,4) scale(0.65)"
-              fill="none"
-              stroke="#ffffff"
-              stroke-width="1.6"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M12 3l7 3v5c0 4.4-3 7.5-7 9-4-1.5-7-4.6-7-9V6l7-3z" />
-              <path d="M9 12l2 2 4-4" />
-            </g>
-          </svg>
-            <span class="brand__name">WinGuard</span>
+      <div class="container">
+        <div class="site-footer__top">
+          <div class="site-footer__brand">
+            <div class="brand">
+              <img src="./assets/favicon.svg" width="48" height="48" alt="" />
+              <span class="brand__name">WinGuard</span>
+            </div>
+            <p>
+              내 PC의 보안 상태를 한눈에, 위협은 바로 조치하는 Windows 전용 보안
+              점검 앱. MIT 라이선스 오픈소스입니다.
+            </p>
           </div>
-          <p>
-            내 PC의 보안 상태를 한눈에, 위협은 바로 조치하는 Windows 전용 보안
-            점검 앱. MIT 라이선스 오픈소스입니다.
-          </p>
+
+          <div class="site-footer__links">
+            <nav class="site-footer__group" aria-labelledby="ft-product">
+              <h2 id="ft-product">제품</h2>
+              <a href="./index.html">소개</a>
+              <a href="./download.html">다운로드</a>
+              <a href="./updates.html">업데이트 소식</a>
+            </nav>
+            <nav class="site-footer__group" aria-labelledby="ft-support">
+              <h2 id="ft-support">지원</h2>
+              <a href="./qna.html">Q&amp;A</a>
+              <a href="https://github.com/gsmtc01/winguard/issues">문의와 버그 신고</a>
+              <a href="https://github.com/gsmtc01/winguard">GitHub 저장소</a>
+            </nav>
+            <nav class="site-footer__group" aria-labelledby="ft-policy">
+              <h2 id="ft-policy">정책</h2>
+              <a href="./privacy.html">개인정보처리방침</a>
+              <a href="./terms.html">이용약관</a>
+              <a href="https://github.com/gsmtc01/winguard/blob/main/LICENSE">MIT License</a>
+            </nav>
+          </div>
         </div>
 
-        <div class="site-footer__links">
-          <nav class="site-footer__group" aria-labelledby="ft-product">
-            <h2 id="ft-product">제품</h2>
-            <a href="./index.html">소개</a>
-            <a href="./download.html">다운로드</a>
-            <a href="./updates.html">업데이트 소식</a>
-          </nav>
-          <nav class="site-footer__group" aria-labelledby="ft-support">
-            <h2 id="ft-support">지원</h2>
-            <a href="./qna.html">Q&amp;A</a>
-            <a href="https://github.com/gsmtc01/winguard/issues">문의 · 버그 신고</a>
-            <a href="https://github.com/gsmtc01/winguard">GitHub 저장소</a>
-          </nav>
-          <nav class="site-footer__group" aria-labelledby="ft-policy">
-            <h2 id="ft-policy">정책</h2>
-            <a href="./privacy.html">개인정보처리방침</a>
-            <a href="./terms.html">이용약관</a>
-            <a href="https://github.com/gsmtc01/winguard/blob/main/LICENSE">MIT License</a>
-          </nav>
+        <div class="site-footer__bottom">
+          <span>© 2026 WinGuard. MIT License.</span>
+          <a href="https://github.com/gsmtc01/winguard">github.com/gsmtc01/winguard</a>
         </div>
-      </div>
-
-      <div class="site-footer__bottom">
-        <span>© 2026 WinGuard. MIT License.</span>
-        <a href="https://github.com/gsmtc01/winguard">github.com/gsmtc01/winguard</a>
       </div>
     </footer>
   </body>

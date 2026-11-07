@@ -1,0 +1,80 @@
+[
+  {
+    "mode": "redesign",
+    "depth": "full",
+    "scope": "site",
+    "shape": "Split Studio",
+    "theme": "brand",
+    "axes": [
+      "neutral",
+      "grotesk-heavy",
+      "green-signal"
+    ],
+    "hero": "Stage",
+    "nav": "slab",
+    "footer": "mast",
+    "imagery": "four existing dashboard screenshots; user-requested SVG sample score gauge",
+    "photos": [],
+    "entry": "Windows users understand security checks and download WinGuard",
+    "fingerprint": [
+      "diptych",
+      "product-lead",
+      "neutral-canvas",
+      "left-aligned",
+      "slab-nav",
+      "mast-footer"
+    ],
+    "sections": [
+      "hero",
+      "facts",
+      "inspection evidence",
+      "feature rows",
+      "privacy boundary",
+      "theme switcher",
+      "download"
+    ],
+    "signature": "real dashboard on neutral canvas, with restrained green actions",
+    "waived": [
+      "59: compact reference-page spacing with rules",
+      "77: utility and document content retains natural width and true item counts",
+      "78: document subsection hierarchy"
+    ],
+    "prompt": "Finish the authorized WinGuard site redesign with Hallmark, using a solid security-product tone matching the logo",
+    "verification": {
+      "pages": 9,
+      "viewport_theme_combinations": 108,
+      "sloplint_fail": 0,
+      "sloplint_unresolved_reflex": 0,
+      "sloplint_warn": 0,
+      "hero_review": "ship, zero findings",
+      "finish_review": "ship, zero findings",
+      "color_pairs": 26,
+      "release_checks": "passed",
+      "legal_text": "preserved"
+    },
+    "date": "2026-11-07",
+    "refinements": {
+      "requested": [
+        "neutral backgrounds instead of green fields",
+        "filled selected theme tab with check mark",
+        "SVG score gauge instead of enlarged crop",
+        "current cyber investigation agency contact"
+      ],
+      "agency_source": "https://www.sci.go.kr/content.do?key=101032",
+      "agency": "중대범죄수사청 사이버기술수사과",
+      "telephone": "02-2609-4574",
+      "privacy_revision": "2026-11-08",
+      "verification": {
+        "route_theme_viewport_combinations": 108,
+        "tab_states": 24,
+        "text_contrast_pairs": 14,
+        "sloplint_fail": 0,
+        "sloplint_unresolved_reflex": 0,
+        "sloplint_warn": 0,
+        "legal_generation": "passed",
+        "release_values": "unchanged",
+        "finish_review": "ship, zero findings"
+      }
+    }
+  }
+]

@@ -59,10 +59,10 @@ function table(rows, indent = "        ") {
   const body = rows.slice(2).map(cells); // rows[1] 은 |---| 구분선
 
   const tr = (cs, tag) =>
-    `${indent}      <tr>` + cs.map((c) => `<${tag}>${inline(c)}</${tag}>`).join("") + "</tr>";
+    `${indent}      <tr>` + cs.map((c) => `<${tag}${tag === "th" ? ' scope="col"' : ""}>${inline(c)}</${tag}>`).join("") + "</tr>";
 
   return [
-    `${indent}<div class="table-wrap">`,
+    `${indent}<div class="table-wrap" tabindex="0" role="region" aria-label="${escapeHtml(head.join(", ")).replace(/"/g, "&quot;")}">`,
     `${indent}  <table>`,
     `${indent}    <tbody>`,
     tr(head, "th"),
@@ -278,6 +278,12 @@ function chrome() {
 
 function page({ title, description, canonical, body }) {
   const { header, footer } = chrome();
+  // 제목과 시행일은 짧은 머리말로, 조문은 별도 읽기 영역으로 나눈다.
+  const divider = "        <hr />";
+  const splitAt = body.indexOf(divider);
+  if (splitAt === -1) throw new Error(`${canonical}: 문서 머리말 구분선이 없습니다`);
+  const intro = body.slice(0, splitAt).trimEnd();
+  const clauses = body.slice(splitAt + divider.length).trimStart();
   return `<!doctype html>
 <html lang="ko">
   <head>
@@ -317,18 +323,21 @@ function page({ title, description, canonical, body }) {
 
     <link rel="preload" as="style" href="./assets/fonts.css" />
     <link rel="stylesheet" href="./assets/fonts.css" />
-    <link rel="stylesheet" href="./assets/styles.css" />
+    <link rel="stylesheet" href="./assets/pages.css" />
     <script src="./assets/site.js" defer></script>
   </head>
   <body>
 ${header}
 
-    <main>
+    <main id="main">
       <!-- 이 페이지는 docs/${canonical === "privacy.html" ? "PRIVACY" : "TERMS"}.md 에서 생성됩니다.
            직접 고치지 말고 원본 마크다운을 고친 뒤
            node website/scripts/build-legal.mjs 를 실행하세요. -->
-      <section class="page page--narrow prose">
-${body}
+      <section class="page page--narrow page-head">
+${intro}
+      </section>
+      <section class="page page--narrow prose" aria-label="${title}">
+        ${clauses}
       </section>
     </main>
 

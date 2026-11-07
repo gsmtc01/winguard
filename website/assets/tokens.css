@@ -1,0 +1,60 @@
+/* WinGuard 디자인 토큰. 색과 글꼴은 이 파일에만 적는다.
+   브랜드 값은 로고 타일(app-icon.svg)과 앱 액센트(Forest)에서 가져왔다.
+   다크 모드는 :root[data-theme="dark"] 가 같은 이름을 덮어쓴다. */
+:root {
+  --space-3xs: 2px; --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px; --space-3xl: 96px; --space-4xl: 144px;
+  --text-xs: 0.8125rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.25rem; --text-xl: 1.5625rem; --text-2xl: 1.953rem; --text-3xl: 2.441rem;
+  --text-display-s: clamp(2.25rem, 4vw + 0.5rem, 3.75rem); --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  --text-section: clamp(2rem, 2.5vw + 1rem, 3.5rem); --text-title: clamp(1.25rem, 0.75vw + 0.875rem, 1.625rem); --text-lead: clamp(1.125rem, 0.35vw + 1rem, 1.375rem);
+  --text-score: 4.75rem;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); --ease-in: cubic-bezier(0.7, 0, 0.84, 0); --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms; --dur-short: 220ms; --dur-long: 420ms;
+  --color-error: oklch(52% 0.19 27); --color-success: oklch(50% 0.12 150);
+  --container: 1440px; --gutter: 64px; --gap-columns: 32px; --section-gap-s: 120px; --section-gap: 144px; --section-gap-l: 176px;
+  --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
+
+  /* 넓은 면은 중립색으로 두고 초록은 버튼과 정보 강조에만 쓴다. */
+  --color-paper: oklch(97.6% 0.002 250); --color-paper-2: oklch(95% 0.002 250); --color-paper-3: oklch(91.5% 0.003 250);
+  --color-ink: oklch(22% 0.004 250); --color-ink-2: oklch(38% 0.004 250); --color-muted: oklch(48% 0.004 250);
+  --color-rule: oklch(87% 0.004 250); --color-rule-strong: oklch(76% 0.004 250);
+
+  /* 액센트: 앱의 Forest (#2f7a63) */
+  --color-accent: oklch(52.6% 0.083 169.8); --color-accent-strong: oklch(46% 0.078 170); --color-accent-ink: oklch(98.5% 0.005 169);
+  --color-accent-soft: oklch(94.2% 0.024 169); --color-focus: oklch(53% 0.14 166);
+
+  /* 슬래브: 머리말, 프라이버시 띠, 푸터의 짙은 띠 */
+  --color-slab: oklch(20.5% 0.004 250); --color-slab-2: oklch(26% 0.004 250);
+  --color-slab-ink: oklch(96.5% 0.003 250); --color-slab-ink-2: oklch(80% 0.004 250); --color-slab-rule: oklch(34% 0.004 250);
+  --color-slab-accent: oklch(78% 0.13 160);
+
+  /* 공지 분류와 변경 이력 태그 */
+  --color-warn: oklch(50% 0.11 70); --color-warn-soft: oklch(95.5% 0.032 85);
+  --color-info: oklch(47% 0.1 252); --color-info-soft: oklch(95% 0.02 252);
+
+  --font-display: "Pretendard Variable", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-body: "Pretendard Variable", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-outlier: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --display-weight: 800;
+  --radius-card: 12px; --radius-input: 8px; --radius-tag: 6px; --radius-pill: 999px; --rule-hair: 1px; --shadow-card: none;
+  --tracking-display: -0.025em;
+  --header-h: 68px;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --color-paper: oklch(15.5% 0.003 250); --color-paper-2: oklch(18.5% 0.003 250); --color-paper-3: oklch(21.5% 0.004 250);
+  --color-ink: oklch(94% 0.003 250); --color-ink-2: oklch(82% 0.004 250); --color-muted: oklch(70% 0.004 250);
+  --color-rule: oklch(29% 0.005 250); --color-rule-strong: oklch(38% 0.005 250);
+
+  /* 앱 다크 모드 액센트 (#35c98a). 밝은 초록이라 글자는 짙은 잉크를 쓴다 */
+  --color-accent: oklch(74.4% 0.153 160); --color-accent-strong: oklch(79% 0.14 160); --color-accent-ink: oklch(17% 0.03 168);
+  --color-accent-soft: oklch(24% 0.04 166); --color-focus: oklch(77% 0.15 160);
+
+  --color-slab: oklch(11.5% 0.003 250); --color-slab-2: oklch(17% 0.004 250);
+  --color-slab-ink: oklch(95% 0.003 250); --color-slab-ink-2: oklch(76% 0.004 250); --color-slab-rule: oklch(25% 0.005 250);
+  --color-slab-accent: oklch(78% 0.14 160);
+
+  --color-warn: oklch(80% 0.12 80); --color-warn-soft: oklch(25% 0.04 80);
+  --color-info: oklch(78% 0.09 252); --color-info-soft: oklch(24% 0.04 252);
+  color-scheme: dark;
+}

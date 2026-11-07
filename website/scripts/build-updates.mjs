@@ -181,7 +181,7 @@ function releaseHtml(rel, isLatest, warnings) {
 
   out.push(`${P}    <p class="release__link">`);
   out.push(
-    `${P}      <a href="https://github.com/${REPO}/releases/tag/${tag}">GitHub 릴리즈에서 원문 보기 →</a>`
+    `${P}      <a href="https://github.com/${REPO}/releases/tag/${tag}">GitHub 릴리즈에서 원문 보기</a>`
   );
   out.push(`${P}    </p>`);
   out.push(`${P}  </div>`);

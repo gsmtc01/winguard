@@ -2,7 +2,9 @@
 
 WinGuard 소개 웹사이트. 빌드 도구 없는 정적 HTML/CSS/JS 라서 그대로 정적 호스팅에 올릴 수 있다.
 
-레이아웃은 디자인 시안을 따르고,
+레이아웃은 로고의 초록색과 실제 앱 캡처를 중심으로 구성하며,
+디자인 기준은 `website/DESIGN.md`에 정리되어 있다.
+배경은 중립색으로 두고 초록색은 버튼과 점수 표시 등 강조 요소에 사용한다.
 **콘텐츠는 실제 저장소와 GitHub 릴리즈에서 가져온 값으로 채워져 있다**
 (v0.1.0 / 2026.08.15 기준).
 
@@ -27,8 +29,11 @@ website/
 │   ├── build-legal.mjs         ← docs/*.md 로 방침·약관 생성 (아래 참고)
 │   └── md-inline.mjs           ← 두 빌더가 함께 쓰는 인라인 마크다운 변환기
 └── assets/
-    ├── styles.css              ← 디자인 토큰 + 전 페이지 공통 스타일
-    ├── site.js                 ← 테마 토글, 모바일 메뉴, 목록 필터, 공지 상세
+    ├── tokens.css              ← 라이트/다크 색상, 글꼴, 간격 토큰
+    ├── base.css                ← 리셋과 기본 접근성 규칙
+    ├── styles.css              ← 공통 스타일과 소개 페이지
+    ├── pages.css               ← 공통 스타일을 가져오는 하위 페이지 진입점
+    ├── site.js                 ← 테마 토글, 모바일 메뉴, 화면 전환 탭, 목록 필터, 공지 상세
     ├── notices.js              ← 공지사항 데이터 (목록·상세 공용 원본)
     ├── favicon.svg             ← 루트 app-icon.svg 사본
     ├── og.png                  ← 공유 카드 이미지 1200×630
@@ -77,8 +82,8 @@ node website/scripts/sync-release.mjs
 
 | 마커 | 값 | 들어 있는 곳 |
 |---|---|---|
-| `data-rel="version"` | `v0.1.0` | index (히어로·CTA), download (머리말·해시 라벨), updates (배너·바로가기) |
-| `data-rel="date"` | `2026.08.15` | index 히어로, download 머리말, updates 배너 |
+| `data-rel="version"` | `v0.1.0` | index (다운로드 띠), download (머리말·해시 라벨), updates (배너·바로가기) |
+| `data-rel="date"` | `2026.08.15` | index 다운로드 띠, download 머리말, updates 배너 |
 | `data-rel="size-x64"` | `약 11.6 MB` | index CTA, download 카드 |
 | `data-rel="size-arm64"` | `약 10.5 MB` | download 카드 |
 | `data-rel="sha-x64"` | SHA-256 | download |
@@ -138,31 +143,27 @@ grep -rn '—' website
 
 ## 디자인 토큰
 
-`assets/styles.css` 의 CSS 변수 이름은 데스크톱 앱(`src/index.css`)과 같다.
-다크 모드는 `:root[data-theme="dark"]` 에서 같은 변수를 덮어쓴다.
+`assets/tokens.css`가 웹사이트 색상과 글꼴의 원본이다.
+다크 모드는 `:root[data-theme="dark"]`에서 같은 변수를 덮어쓴다.
+역할과 레이아웃 기준은 `DESIGN.md`를 참고한다.
 
-| 역할 | 변수 | 라이트 | 다크 |
-|---|---|---|---|
-| 배경 | `--bg` | `#f4f4f1` | `#0b0e0d` |
-| 카드/표면 | `--surface` | `#ffffff` | `#101513` |
-| 테두리 | `--border` | `#ecebe5` | `#1a201e` |
-| 본문 텍스트 | `--text` | `#26251f` | `#eef2ef` |
-| 보조 텍스트 | `--text-2` | `#74726a` | `#99a09a` |
-| 주 액센트 | `--accent` | `#2f7a63` | `#35c98a` |
-| 액센트 소프트 | `--accent-soft` | `#eef3f1` | `#14211c` |
-| 경고 (점검 안내) | `--warn` / `--warn-soft` | `#b5811f` / `#faf3e3` | `#d8a13e` / `#2a2213` |
-| 정보 (이벤트) | `--info` / `--info-soft` | `#3a6ea5` / `#eaf1fa` | `#4a86c4` / `#152230` |
+소개 페이지는 `assets/styles.css`, 하위 페이지는 이를 가져오는
+`assets/pages.css`를 읽는다. `pages.css`는 문서와 검색 페이지에 맞는
+짧은 머리말과 읽기 위계를 정의한다.
 
-테마는 `localStorage['winguard-theme']` 에 저장하고, 값이 없으면
-`prefers-color-scheme` 을 따른다. `<head>` 의 인라인 스크립트가 첫 페인트 전에
-`data-theme` 을 확정해 깜빡임을 막으므로, 페이지를 새로 추가할 때 이 스크립트도
-그대로 복사해야 한다.
+테마는 `localStorage['winguard-theme']`에 저장하고, 값이 없으면
+`prefers-color-scheme`을 따른다. `<head>`의 인라인 스크립트가 첫 페인트 전에
+`data-theme`을 확정해 깜빡임을 막는다.
 
-모바일 브레이크포인트는 900px (디자인 시안의 JS 분기와 같은 값).
+주요 반응형 분기는 960px이며, 640px 이하에서 여백과 세부 열 수를 한 번 더 조정한다.
+모바일 메뉴는 Escape로 닫을 수 있고, 스크립트가 없으면 링크가 그대로 보인다.
+소개 화면 탭은 방향키, Home, End를 지원한다. Q&A 바로가기는 질문을 펼친 뒤
+제목으로 키보드 포커스를 옮긴다. 스크롤은 움직임 감소 설정을 따른다.
 
 ## 헤더·푸터는 페이지마다 복제되어 있다
 
-빌드 단계가 없으므로 헤더와 푸터 마크업이 9개 페이지에 각각 들어 있다.
+헤더와 푸터 마크업은 9개 페이지에 각각 들어 있다.
+법적 문서 두 페이지는 `404.html`의 공통 마크업을 복사하여 생성한다.
 **내비게이션 항목이나 푸터 링크를 고칠 때는 9개 파일을 함께 고쳐야 한다.**
 현재 위치 표시는 각 페이지의 `<a aria-current="page">` 로만 다르다.
 
@@ -176,9 +177,13 @@ grep -rn '—' website
 |---|---|---|
 | `hero-light.png` | 히어로 (라이트 테마일 때) | 1240×979 |
 | `hero-dark.png` | 히어로 (다크 테마일 때) | 1240×979 |
-| `dashboard-light.png` | 쇼케이스 좌측 | 1400×715 |
-| `dashboard-dark.png` | 쇼케이스 우측 | 1400×715 |
+| `dashboard-light.png` | 쇼케이스 라이트 탭 | 1400×715 |
+| `dashboard-dark.png` | 쇼케이스 다크 탭 | 1400×715 |
 
+쇼케이스는 탭으로 전환하며 JavaScript가 꺼져 있으면 두 화면이 모두 보인다.
+선택된 탭은 반전 채움색과 체크 표시로 구분한다.
+"한눈에 보는 보안 점수"의 게이지는 확대 이미지 대신 SVG로 표현하며,
+23개 항목이 모두 정상인 예시임을 명시한다.
 히어로 이미지는 사이트 테마를 따라 교체된다(`.shot__light` / `.shot__dark`).
 파일이 없으면 이미지를 숨기고 placeholder 문구를 대신 보여주므로(`site.js` 의
 `error` 핸들러) 콘솔 오류 없이 넘어간다.
