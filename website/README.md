@@ -2,7 +2,7 @@
 
 WinGuard 소개 웹사이트. 빌드 도구 없는 정적 HTML/CSS/JS 라서 그대로 정적 호스팅에 올릴 수 있다.
 
-레이아웃은 Claude Design 프로젝트 `WinGuard 웹사이트 제작 완료` 의 시안을 따르고,
+레이아웃은 디자인 시안을 따르고,
 **콘텐츠는 실제 저장소와 GitHub 릴리즈에서 가져온 값으로 채워져 있다**
 (v0.1.0 / 2026.08.15 기준).
 
@@ -108,7 +108,7 @@ node website/scripts/sync-release.mjs
   공지 · 이용약관 제6조 · 개인정보 처리방침 제8조에 넣어두었다. 서명을 적용하면
   이 문구를 걷어내야 한다.
 - **AI 모델 다운로드**: 첫 사용 시 약 2.89 GiB 를 HuggingFace 에서 받는다.
-  다운로드 페이지, Q&A, 방침 제5.2조에 명시되어 있다.
+  다운로드 페이지, Q&A, 방침 제5.2조에 적혀 있다.
 - **외부 통신 대상**: 방침 제5조가 VirusTotal · HuggingFace · GitHub ·
   `endoflife.date` · `versionhistory.googleapis.com` ·
   `product-details.mozilla.org` · `edgeupdates.microsoft.com` 를 열거한다.
@@ -138,7 +138,7 @@ grep -rn '—' website
 
 ## 디자인 토큰
 
-`assets/styles.css` 의 CSS 변수 이름은 데스크톱 앱(`src/index.css`)과 동일하다.
+`assets/styles.css` 의 CSS 변수 이름은 데스크톱 앱(`src/index.css`)과 같다.
 다크 모드는 `:root[data-theme="dark"]` 에서 같은 변수를 덮어쓴다.
 
 | 역할 | 변수 | 라이트 | 다크 |
@@ -158,7 +158,7 @@ grep -rn '—' website
 `data-theme` 을 확정해 깜빡임을 막으므로, 페이지를 새로 추가할 때 이 스크립트도
 그대로 복사해야 한다.
 
-모바일 브레이크포인트는 900px (디자인 원본의 JS 분기와 동일한 값).
+모바일 브레이크포인트는 900px (디자인 시안의 JS 분기와 같은 값).
 
 ## 헤더·푸터는 페이지마다 복제되어 있다
 
